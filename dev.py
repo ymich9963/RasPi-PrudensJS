@@ -1,11 +1,12 @@
-import setup
+import tech2 as tech
 
 version = 1
 
 while True:
 #code for changing policy version######################
     pf = open("/home/yiannis/cyens/policy.txt", "w")
-    if setup.button2.is_pressed:
+    #if tech.button2.is_pressed:
+    if tech.btn_is_pressed(2):
         print("pressed------------")
         version += 1
         if version > 4:
@@ -33,10 +34,11 @@ while True:
     pf.close()
 ###########################################################
 
-    dist = setup.getDist()
+    dist = tech.getDist(17, 18)
     toContext ="dist("+str(int(dist*100))+");"
     
-    if setup.button1.is_pressed:
+    #if tech.button1.is_pressed:
+    if tech.btn_is_held(24):
         toContext += "atHome;"
     else:
         toContext += "-atHome;"
@@ -44,16 +46,26 @@ while True:
     with open("/home/yiannis/cyens/context.txt","w") as f:
         f.write(toContext)
      
-    conclusions = setup.subproc()
+    conclusions = tech.subproc()
     #print(conclusions)
     
     if "blinkLED1slow" in conclusions:
-        setup.blinkLEDslow(0)
+        tech.blinkLEDslow(3)
     elif "blinkLED1fast" in conclusions:
-        setup.blinkLEDfast(0)
+        tech.blinkLEDfast(3)
     elif "onLED2" in conclusions:
-        setup.onLED(1)
+        tech.onLED(4)
     elif "sysStandby" in conclusions:
-        setup.sysStandby()
-        
+        tech.sysStandby()
+    
+    # for sensor in sensors:
+    #     type_of_sensor = typeof(sensor) 
+    #     if type_of_sensor == "Button":
+    #         # do something
+    #         pass
+    #     if type_of_sensor == "Dist":
+    #         pass
+    #     else:
+    #         raise TypeError("Sensor type not supported")
+
     print('Distance: ' , dist * 100)
