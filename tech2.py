@@ -1,70 +1,63 @@
 import RPi.GPIO as GPIO
-from time import sleep
-import time
-import subprocess, json
+import fcns as fcn
 
 GPIO.setmode(GPIO.BCM)
 
 def setupLED(pin):
     GPIO.setup(pin,GPIO.OUT, initial = GPIO.LOW)
 
-def blinkLEDslow(pin):
-    GPIO.output(pin, 1)
-    sleep(1)
-    GPIO.output(pin, 0)
-    
-def blinkLEDfast(pin):
-    GPIO.output(pin, 1)
-    sleep(0.2)
-    GPIO.output(pin, 0)
-
 def setupButton(pin):
     GPIO.setup(pin, GPIO.IN, pull_up_down = GPIO.PUD_UP)
     GPIO.add_event_detect(pin,GPIO.RISING)
 
-def btn_is_pressed(pin):
-    return GPIO.event_detected(pin)
-
-def btn_is_held(pin):
-    return not GPIO.input(pin)
-
 def setupUSR(echo_pin, trig_pin):
     GPIO.setup(echo_pin, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
     GPIO.setup(trig_pin, GPIO.OUT, initial = GPIO.LOW)
-    
-def getDist(echo_pin, trig_pin):
-    GPIO.output(trig_pin, 0)
-    sleep(0.000002)
-    GPIO.output(trig_pin, 1)
-    sleep(0.000001)
-    GPIO.output(trig_pin, 0)
-    speed_of_sound = 343.26
-    while GPIO.input(echo_pin) == 0:
-        pulse_start = time.time()
-    while GPIO.input(echo_pin) == 1:
-        pulse_end = time.time()
-    return (pulse_end - pulse_start) * 343.26 / 2
 
-def subproc():
-    proc = subprocess.Popen(["/usr/bin/node","/home/yiannis/cyens/prudens-js/node/app.js", ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    out, err = proc.communicate()
-    json_out = json.loads(out)
-    proc.terminate()
-    return list(json_out["graph"].keys())
+class Sensor:
+    def __init__(self, sensor_id:str, pin:int, literal_pos:str, literal_neg:str, action_fcn, setup_fcn):
+        self.sensor_id = sensor_id
+        self.pin = pin
+        self.literal_pos = literal_pos
+        self.literal_neg = literal_neg
+        self.action_fcn = action_fcn
+        self.setup_fcn = setup_fcn
 
-def onLED(pin):
-    GPIO.output(pin, 1)
-    
-def offLED(pin):
-    GPIO.output(pin, 0)
+    def sensor_config(self):
+        size = len(self.pin)
+        if size == 1:
+            self.setup_fcn(self.pin[0])
+        elif size == 2:
+            self.setup_fcn(self.pin[0],self.pin[1])
+        elif size == 3:
+            self.setup_fcn(self.pin[0],self.pin[1],self.pin[2])
+        else:
+            self.setup_fcn(self.pin[0],self.pin[1],self.pin[2],self.pin[3])
 
-def sysStandby():
-    GPIO.output(3, 0)
-    GPIO.output(4, 0)
+class Actuator:
+    def __init__(self, actuator_id:str, pin:int, literal:str, action_fcn, setup_fcn):
+        self.actuator_id = actuator_id
+        self.pin = pin
+        self.literal = literal
+        self.action_fcn = action_fcn
+        self.setup_fcn = setup_fcn
 
+    def actuator_config(self):
+        size = len(self.pin)
+        if size == 1:
+            self.setup_fcn(self.pin[0])
+        elif size == 2:
+            self.setup_fcn(self.pin[0],self.pin[1])
+        elif size == 3:
+            self.setup_fcn(self.pin[0],self.pin[1],self.pin[2])
+        else:
+            self.setup_fcn(self.pin[0],self.pin[1],self.pin[2],self.pin[3])
 
-setupLED(3)
-setupLED(4)
-setupButton(24)
-setupButton(2)
-setupUSR(17, 18)
+sens_array = [Sensor("",0,"","",None,None) for i in range(3)] #initialising array with empty sensor objects
+sens_array[0] = Sensor("USR1",[17,18],"dist(X)","",fcn.getDist,setupUSR)
+sens_array[1] = Sensor("BTN1",[2],"atHome","-atHome",fcn.btn_is_held,setupButton)
+sens_array[2] = Sensor("BTN2",[24],"","",None,setupButton)
+
+act_array = [Actuator("",0,"",None,None) for i in range(2)] #initialising array with empty sensor objects
+act_array[0] = Actuator("LED1", [3], "blinkLED1slow", fcn.blinkLEDslow, setupLED)
+act_array[1] = Actuator("LED2", [4], "onLED2", fcn.onLED, setupLED)
