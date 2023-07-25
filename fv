@@ -1,0 +1,294 @@
+[33mtag v0.0.1[m
+Tagger: ymich9963 <gmichael834@gmail.com>
+Date:   Tue Jul 25 21:15:30 2023 +0100
+
+first version with sensor setup abstraction
+
+[33mcommit 722c3c77d5d2eabd80696ec309adad86759b012b[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;33mtag: v0.0.1[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: ymich9963 <gmichael834@gmail.com>
+Date:   Tue Jul 25 13:01:25 2023 +0100
+
+    RPi.GPIO full imlementation. Abstraction added in sensor and actuator setup
+
+[1mdiff --git a/__pycache__/fcns.cpython-39.pyc b/__pycache__/fcns.cpython-39.pyc[m
+[1mnew file mode 100644[m
+[1mindex 0000000..9a76663[m
+Binary files /dev/null and b/__pycache__/fcns.cpython-39.pyc differ
+[1mdiff --git a/__pycache__/tech2.cpython-39.pyc b/__pycache__/tech2.cpython-39.pyc[m
+[1mindex 551df0e..483ceb4 100644[m
+Binary files a/__pycache__/tech2.cpython-39.pyc and b/__pycache__/tech2.cpython-39.pyc differ
+[1mdiff --git a/context.txt b/context.txt[m
+[1mindex c5d9f30..e6058c8 100644[m
+[1m--- a/context.txt[m
+[1m+++ b/context.txt[m
+[36m@@ -1 +1 @@[m
+[31m-dist(15);-atHome;[m
+\ No newline at end of file[m
+[32m+[m[32mdist(100);-atHome;[m
+\ No newline at end of file[m
+[1mdiff --git a/dev.py b/dev.py[m
+[1mindex 0ba47b2..83b3087 100644[m
+[1m--- a/dev.py[m
+[1m+++ b/dev.py[m
+[36m@@ -1,13 +1,18 @@[m
+[32m+[m[32mimport fcns as fcn[m
+ import tech2 as tech[m
+ [m
+[31m-version = 1[m
+[32m+[m[32mversion = 1[m[41m [m
+[32m+[m[32mfor sensor in tech.sens_array: #for-loops to setup each sensor specified[m
+[32m+[m[32m    sensor.sensor_config()[m
+[32m+[m[41m    [m
+[32m+[m[32mfor actuator in tech.act_array:[m
+[32m+[m[32m    actuator.actuator_config()[m
+ [m
+ while True:[m
+ #code for changing policy version######################[m
+     pf = open("/home/yiannis/cyens/policy.txt", "w")[m
+[31m-    #if tech.button2.is_pressed:[m
+[31m-    if tech.btn_is_pressed(2):[m
+[31m-        print("pressed------------")[m
+[32m+[m[32m    if fcn.btn_is_pressed(2):[m
+[32m+[m[32m        #print("pressed------------")[m
+         version += 1[m
+         if version > 4:[m
+             version = 1[m
+[36m@@ -34,29 +39,28 @@[m [mwhile True:[m
+     pf.close()[m
+ ###########################################################[m
+ [m
+[31m-    dist = tech.getDist(17, 18)[m
+[31m-    toContext ="dist("+str(int(dist*100))+");"[m
+[32m+[m[32m    dist = fcn.getDist(17, 18)[m
+[32m+[m[32m    toContext ="dist("+str(int(dist))+");"[m
+     [m
+[31m-    #if tech.button1.is_pressed:[m
+[31m-    if tech.btn_is_held(24):[m
+[32m+[m[32m    if fcn.btn_is_held(24):[m
+         toContext += "atHome;"[m
+     else:[m
+         toContext += "-atHome;"[m
+             [m
+     with open("/home/yiannis/cyens/context.txt","w") as f:[m
+         f.write(toContext)[m
+[31m-     [m
+[31m-    conclusions = tech.subproc()[m
+[32m+[m[41m    [m
+[32m+[m[32m    conclusions = fcn.subproc()[m
+     #print(conclusions)[m
+     [m
+     if "blinkLED1slow" in conclusions:[m
+[31m-        tech.blinkLEDslow(3)[m
+[32m+[m[32m        fcn.blinkLEDslow(3)[m
+     elif "blinkLED1fast" in conclusions:[m
+[31m-        tech.blinkLEDfast(3)[m
+[32m+[m[32m        fcn.blinkLEDfast(3)[m
+     elif "onLED2" in conclusions:[m
+[31m-        tech.onLED(4)[m
+[32m+[m[32m        fcn.onLED(4)[m
+     elif "sysStandby" in conclusions:[m
+[31m-        tech.sysStandby()[m
+[32m+[m[32m        fcn.sysStandby()[m
+     [m
+     # for sensor in sensors:[m
+     #     type_of_sensor = typeof(sensor) [m
+[36m@@ -68,4 +72,5 @@[m [mwhile True:[m
+     #     else:[m
+     #         raise TypeError("Sensor type not supported")[m
+ [m
+[31m-    print('Distance: ' , dist * 100)[m
+[32m+[m[32m    print('Distance: ' , dist)[m
+[41m+[m
+[1mdiff --git a/fcns.py b/fcns.py[m
+[1mnew file mode 100644[m
+[1mindex 0000000..c23bd42[m
+[1m--- /dev/null[m
+[1m+++ b/fcns.py[m
+[36m@@ -0,0 +1,61 @@[m
+[32m+[m[32mimport RPi.GPIO as GPIO[m
+[32m+[m[32mfrom time import sleep[m
+[32m+[m[32mimport time[m
+[32m+[m[32mimport subprocess, json[m
+[32m+[m
+[32m+[m[32mGPIO.setmode(GPIO.BCM)[m
+[32m+[m
+[32m+[m[32mdef blinkLEDslow(pin):[m
+[32m+[m[32m    GPIO.output(pin, 1)[m
+[32m+[m[32m    sleep(1)[m
+[32m+[m[32m    GPIO.output(pin, 0)[m
+[32m+[m[41m    [m
+[32m+[m[32mdef blinkLEDfast(pin):[m
+[32m+[m[32m    GPIO.output(pin, 1)[m
+[32m+[m[32m    sleep(0.2)[m
+[32m+[m[32m    GPIO.output(pin, 0)[m
+[32m+[m
+[32m+[m[32mdef btn_is_pressed(pin):[m
+[32m+[m[32m    return GPIO.event_detected(pin)[m
+[32m+[m
+[32m+[m[32mdef btn_is_held(pin):[m
+[32m+[m[32m    return not GPIO.input(pin)[m
+[32m+[m
+[32m+[m[32mdef getDist(echo_pin, trig_pin):[m
+[32m+[m[32m    GPIO.output(trig_pin, 0)[m
+[32m+[m[32m    sleep(0.0000005)[m
+[32m+[m[32m    GPIO.output(trig_pin, 1)[m
+[32m+[m[32m    sleep(0.000001)[m
+[32m+[m[32m    GPIO.output(trig_pin, 0)[m
+[32m+[m[32m    speed_of_sound = 343.26[m
+[32m+[m[32m    timeout = 100000[m
+[32m+[m[32m    while GPIO.input(echo_pin) == 0 and timeout != 0:[m
+[32m+[m[32m        timeout -= 1[m
+[32m+[m[32m        pulse_start = time.time()[m
+[32m+[m[32m    if timeout == 0:[m
+[32m+[m[32m        pulse_end = pulse_start[m
+[32m+[m[32m    while GPIO.input(echo_pin) == 1:[m
+[32m+[m[32m        pulse_end = time.time()[m
+[32m+[m[32m    _dist = 100 * (pulse_end - pulse_start) * speed_of_sound / 2 #*100 for cm[m
+[32m+[m[32m    if _dist < 0:[m
+[32m+[m[32m        _dist = 0[m
+[32m+[m[32m    elif _dist > 100:[m
+[32m+[m[32m        _dist = 100 #100 is max dist[m
+[32m+[m[32m    return _dist[m
+[32m+[m
+[32m+[m[32mdef subproc():[m
+[32m+[m[32m    proc = subprocess.Popen(["/usr/bin/node","/home/yiannis/cyens/prudens-js/node/app.js", ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)[m
+[32m+[m[32m    out, err = proc.communicate()[m
+[32m+[m[32m    json_out = json.loads(out)[m
+[32m+[m[32m    proc.terminate()[m
+[32m+[m[32m    return list(json_out["graph"].keys())[m
+[32m+[m
+[32m+[m[32mdef onLED(pin):[m
+[32m+[m[32m    GPIO.output(pin, 1)[m
+[32m+[m[41m    [m
+[32m+[m[32mdef offLED(pin):[m
+[32m+[m[32m    GPIO.output(pin, 0)[m
+[32m+[m
+[32m+[m[32mdef sysStandby():[m
+[32m+[m[32m    GPIO.output(3, 0)[m
+[32m+[m[32m    GPIO.output(4, 0)[m
+\ No newline at end of file[m
+[1mdiff --git a/tech2.py b/tech2.py[m
+[1mindex e49c90d..e5053b4 100644[m
+[1m--- a/tech2.py[m
+[1m+++ b/tech2.py[m
+[36m@@ -1,70 +1,63 @@[m
+ import RPi.GPIO as GPIO[m
+[31m-from time import sleep[m
+[31m-import time[m
+[31m-import subprocess, json[m
+[32m+[m[32mimport fcns as fcn[m
+ [m
+ GPIO.setmode(GPIO.BCM)[m
+ [m
+ def setupLED(pin):[m
+     GPIO.setup(pin,GPIO.OUT, initial = GPIO.LOW)[m
+ [m
+[31m-def blinkLEDslow(pin):[m
+[31m-    GPIO.output(pin, 1)[m
+[31m-    sleep(1)[m
+[31m-    GPIO.output(pin, 0)[m
+[31m-    [m
+[31m-def blinkLEDfast(pin):[m
+[31m-    GPIO.output(pin, 1)[m
+[31m-    sleep(0.2)[m
+[31m-    GPIO.output(pin, 0)[m
+[31m-[m
+ def setupButton(pin):[m
+     GPIO.setup(pin, GPIO.IN, pull_up_down = GPIO.PUD_UP)[m
+     GPIO.add_event_detect(pin,GPIO.RISING)[m
+ [m
+[31m-def btn_is_pressed(pin):[m
+[31m-    return GPIO.event_detected(pin)[m
+[31m-[m
+[31m-def btn_is_held(pin):[m
+[31m-    return not GPIO.input(pin)[m
+[31m-[m
+ def setupUSR(echo_pin, trig_pin):[m
+     GPIO.setup(echo_pin, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)[m
+     GPIO.setup(trig_pin, GPIO.OUT, initial = GPIO.LOW)[m
+[31m-    [m
+[31m-def getDist(echo_pin, trig_pin):[m
+[31m-    GPIO.output(trig_pin, 0)[m
+[31m-    sleep(0.000002)[m
+[31m-    GPIO.output(trig_pin, 1)[m
+[31m-    sleep(0.000001)[m
+[31m-    GPIO.output(trig_pin, 0)[m
+[31m-    speed_of_sound = 343.26[m
+[31m-    while GPIO.input(echo_pin) == 0:[m
+[31m-        pulse_start = time.time()[m
+[31m-    while GPIO.input(echo_pin) == 1:[m
+[31m-        pulse_end = time.time()[m
+[31m-    return (pulse_end - pulse_start) * 343.26 / 2[m
+[31m-[m
+[31m-def subproc():[m
+[31m-    proc = subprocess.Popen(["/usr/bin/node","/home/yiannis/cyens/prudens-js/node/app.js", ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)[m
+[31m-    out, err = proc.communicate()[m
+[31m-    json_out = json.loads(out)[m
+[31m-    proc.terminate()[m
+[31m-    return list(json_out["graph"].keys())[m
+[31m-[m
+[31m-def onLED(pin):[m
+[31m-    GPIO.output(pin, 1)[m
+[31m-    [m
+[31m-def offLED(pin):[m
+[31m-    GPIO.output(pin, 0)[m
+[31m-[m
+[31m-def sysStandby():[m
+[31m-    GPIO.output(3, 0)[m
+[31m-    GPIO.output(4, 0)[m
+[31m-[m
+ [m
+[31m-setupLED(3)[m
+[31m-setupLED(4)[m
+[31m-setupButton(24)[m
+[31m-setupButton(2)[m
+[31m-setupUSR(17, 18)[m
+\ No newline at end of file[m
+[32m+[m[32mclass Sensor:[m
+[32m+[m[32m    def __init__(self, sensor_id:str, pin:int, literal_pos:str, literal_neg:str, action_fcn, setup_fcn):[m
+[32m+[m[32m        self.sensor_id = sensor_id[m
+[32m+[m[32m        self.pin = pin[m
+[32m+[m[32m        self.literal_pos = literal_pos[m
+[32m+[m[32m        self.literal_neg = literal_neg[m
+[32m+[m[32m        self.action_fcn = action_fcn[m
+[32m+[m[32m        self.setup_fcn = setup_fcn[m
+[32m+[m
+[32m+[m[32m    def sensor_config(self):[m
+[32m+[m[32m        size = len(self.pin)[m
+[32m+[m[32m        if size == 1:[m
+[32m+[m[32m            self.setup_fcn(self.pin[0])[m
+[32m+[m[32m        elif size == 2:[m
+[32m+[m[32m            self.setup_fcn(self.pin[0],self.pin[1])[m
+[32m+[m[32m        elif size == 3:[m
+[32m+[m[32m            self.setup_fcn(self.pin[0],self.pin[1],self.pin[2])[m
+[32m+[m[32m        else:[m
+[32m+[m[32m            self.setup_fcn(self.pin[0],self.pin[1],self.pin[2],self.pin[3])[m
+[32m+[m
+[32m+[m[32mclass Actuator:[m
+[32m+[m[32m    def __init__(self, actuator_id:str, pin:int, literal:str, action_fcn, setup_fcn):[m
+[32m+[m[32m        self.actuator_id = actuator_id[m
+[32m+[m[32m        self.pin = pin[m
+[32m+[m[32m        self.literal = literal[m
+[32m+[m[32m        self.action_fcn = action_fcn[m
+[32m+[m[32m        self.setup_fcn = setup_fcn[m
+[32m+[m
+[32m+[m[32m    def actuator_config(self):[m
+[32m+[m[32m        size = len(self.pin)[m
+[32m+[m[32m        if size == 1:[m
+[32m+[m[32m            self.setup_fcn(self.pin[0])[m
+[32m+[m[32m        elif size == 2:[m
+[32m+[m[32m            self.setup_fcn(self.pin[0],self.pin[1])[m
+[32m+[m[32m        elif size == 3:[m
+[32m+[m[32m            self.setup_fcn(self.pin[0],self.pin[1],self.pin[2])[m
+[32m+[m[32m        else:[m
+[32m+[m[32m            self.setup_fcn(self.pin[0],self.pin[1],self.pin[2],self.pin[3])[m
+[32m+[m
+[32m+[m[32msens_array = [Sensor("",0,"","",None,None) for i in range(3)] #initialising array with empty sensor objects[m
+[32m+[m[32msens_array[0] = Sensor("USR1",[17,18],"dist(X)","",fcn.getDist,setupUSR)[m
+[32m+[m[32msens_array[1] = Sensor("BTN1",[2],"atHome","-atHome",fcn.btn_is_held,setupButton)[m
+[32m+[m[32msens_array[2] = Sensor("BTN2",[24],"","",None,setupButton)[m
+[32m+[m
+[32m+[m[32mact_array = [Actuator("",0,"",None,None) for i in range(2)] #initialising array with empty sensor objects[m
+[32m+[m[32mact_array[0] = Actuator("LED1", [3], "blinkLED1slow", fcn.blinkLEDslow, setupLED)[m
+[32m+[m[32mact_array[1] = Actuator("LED2", [4], "onLED2", fcn.onLED, setupLED)[m
+\ No newline at end of file[m

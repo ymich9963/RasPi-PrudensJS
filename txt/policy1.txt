@@ -1,0 +1,7 @@
+@KnowledgeBase
+    R1 :: dist(X), ?checkFar(X) implies blinkLED1slow;
+ 
+@Code
+function checkFar(x) {
+    return parseFloat(x) > 10;
+}

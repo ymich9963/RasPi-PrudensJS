@@ -1,84 +1,26 @@
-from gpiozero import LEDBoard, DistanceSensor, Button
-from time import sleep
-import subprocess, json
+import RPi.GPIO as GPIO
+import fcns as fcn
+import classes as cf
 
-leds = LEDBoard(3,4)
-sensorDist = DistanceSensor(echo=17, trigger=18)
-button1 = Button(24)
-button2 = Button(2)
+GPIO.setmode(GPIO.BCM)
 
-class Sensor:
-    def __init__(self, sensor_object, literals:tuple):
-        self.sensor_object = sensor_object
-        self.literals = literals
+def setupLED(pin):
+    GPIO.setup(pin,GPIO.OUT, initial = GPIO.LOW)
 
-class Sensor:
-    sensor_id = 0
-    def __init__(self, sensor_type, sensor_port, literal_inp, literal_inp_neg, **kwargs):
-        Sensor.sensor_id += 1
-        self.sensor_type = sensor_type
-        self.sensor_port = sensor_port
-        self.literal_inp = literal_inp
-        self.literal_inp_neg = literal_inp_neg
+def setupButton(pin):
+    GPIO.setup(pin, GPIO.IN, pull_up_down = GPIO.PUD_UP)
+    GPIO.add_event_detect(pin,GPIO.RISING)
 
-        if self.sensor_type == "Button":
-            self.sensor_ = Button(self.sensor_port)
-        
+def setupUSR(echo_pin, trig_pin):
+    GPIO.setup(echo_pin, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
+    GPIO.setup(trig_pin, GPIO.OUT, initial = GPIO.LOW)
 
-class Actuator:
-    def __init__(self, actuator_object, fn): #import fn:callable
-        self.actuator_object = actuator_object
-        self.fn = fn
-    
-    def call_fn(self):
-        self.fn(self)
+#declaring sensors and actuators as objects
+sens_array = [cf.Sensor("",0,"","",None,None) for i in range(3)] #initialising array with empty sensor objects, there are 3 sensors
+sens_array[0] = cf.Sensor("USR1",[17,18],"dist(X);","",fcn.getDist,setupUSR)
+sens_array[1] = cf.Sensor("BTN1",[24],"atHome;","-atHome;",fcn.btn_is_held,setupButton)
+sens_array[2] = cf.Sensor("BTN2",[2],"","",fcn.btn_is_pressed,setupButton)
 
-# act_array[0] = Actuator("LED", 3, "blinkLEDslow", "blinkLED1slow")
-# act_array[1] = Actuator("LED", 3, "blinkLEDfast", "blinkLED1fast")
-
-# sens_array[0] = Sensor("Dist", 1718, "dist(X)")
-# sens_array[1] = Sensor("Button", 24, "atHome", "-atHome")
-
-# sensors = [ Button(24), Button(2),DistanceSensor(echo=17, trigger=18)]
-# actuators = [Actuator(actuator_object=LEDBoard(3,4), fn=blinkLEDslow)]
-
-
-# class Actuator:
-#     actuator_id = 0
-#     def __init__(self, actuator_type, actuator_port, actuator_fcn, prudens_on):
-#         Actuator.actuator_id += 1
-#         self.actuator_type = actuator_type
-#         self.actuator_port = actuator_port
-#         self.actuator_fcn = actuator_fcn
-#         self.prudens_output = prudens_on
-
-def subproc():
-    proc = subprocess.Popen(["/usr/bin/node","/home/yiannis/cyens/prudens-js/node/app.js", ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    out, err = proc.communicate()
-    json_out = json.loads(out)
-    proc.terminate()
-    return list(json_out["graph"].keys())
-    
-def blinkLEDslow(led_id):
-    for i in range(len(leds)):
-        leds[i].off()
-    leds[led_id].on()
-    sleep(1)
-    leds[led_id].off()
-
-def blinkLEDfast(led_id): 
-    for i in range(len(leds)):
-        leds[i].off()
-    leds[led_id].on()
-    sleep(0.2)
-    leds[led_id].off()
-    
-def onLED(led_id):
-    leds[led_id].on()
-    
-def sysStandby():
-    for i in range(len(leds)):
-        leds[i].off()
-    
-def getDist():
-    return sensorDist.distance
+act_array = [cf.Actuator("",0,"",None,None) for i in range(2)] #initialising array with empty sensor objects, there are 2 actuators
+act_array[0] = cf.Actuator("LED1", [3], "blinkLED1slow", fcn.blinkLEDslow, setupLED)
+act_array[1] = cf.Actuator("LED2", [4], "onLED2", fcn.onLED, setupLED)

@@ -29,11 +29,10 @@ def getDist(echo_pin, trig_pin):
     GPIO.output(trig_pin, 0)
     speed_of_sound = 343.26
     timeout = 100000
-    while GPIO.input(echo_pin) == 0 and timeout != 0:
+    while GPIO.input(echo_pin) == 0:
         timeout -= 1
         pulse_start = time.time()
-    if timeout == 0:
-        pulse_end = pulse_start
+    pulse_end = pulse_start
     while GPIO.input(echo_pin) == 1:
         pulse_end = time.time()
     _dist = 100 * (pulse_end - pulse_start) * speed_of_sound / 2 #*100 for cm
