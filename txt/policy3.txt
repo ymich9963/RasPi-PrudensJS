@@ -2,7 +2,7 @@
     R1 :: dist(X), ?checkFar(X) implies blinkLED1slow;
     R2 :: dist(X), ?checkClose(X) implies blinkLED1fast;
     C1 :: blinkLED1fast # blinkLED1slow;
-    R3 :: atHome implies sysStandby;
+    R3 :: btn1_pressed implies sysStandby;
     C2 :: blinkLED1slow # sysStandby;
     C3 :: blinkLED1fast # sysStandby;
   

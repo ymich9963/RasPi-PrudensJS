@@ -15,16 +15,21 @@ class Sensor:
 
     def sensor_setup(self):
         size = len(self.pin)
-        if size == 1:
-            self.setup_fcn(self.pin[0])
-        elif size == 2:
-            self.setup_fcn(self.pin[0],self.pin[1])
-        elif size == 3:
-            self.setup_fcn(self.pin[0],self.pin[1],self.pin[2])
+        if self.setup_fcn == None:
+            return
         else:
-            self.setup_fcn(self.pin[0],self.pin[1],self.pin[2],self.pin[3])    
+            if size == 1:
+                self.setup_fcn(self.pin[0])
+            elif size == 2:
+                self.setup_fcn(self.pin[0],self.pin[1])
+            elif size == 3:
+                self.setup_fcn(self.pin[0],self.pin[1],self.pin[2])
+            elif size == 4:
+                self.setup_fcn(self.pin[0],self.pin[1],self.pin[2],self.pin[3])
+            else:
+                print("Error notify dev, allowed pins exceeded for " + self.sensor_id)  
             
-    def sensor_action(self):
+    def sensor_action(self): #function used to retrieve data from sensor
         size = len(self.pin)
         self.prev_data = self.data
         if size == 1:
@@ -36,24 +41,21 @@ class Sensor:
         else:
             self.data = self.action_fcn(self.pin[0],self.pin[1],self.pin[2],self.pin[3])
 
-    def data_in_literal(self):
+    def data_in_literal(self): #fcn used to replace the X in a numerical input to the context
         if "X" in self.literal_p:
             self.literal_p = self.literal_p.replace("X", str(int(self.data)))
             self.is_literal_numeric = True
         elif "X" in self.literal_n:
             self.literal_n = self.literal_n.replace("X",str(int(self.data)))
             self.is_literal_numeric = True
-        elif any((num in set('0123456789')) for num in self.literal_p):
+        elif self.is_literal_numeric and any((num in set('0123456789')) for num in self.literal_p):
             if self.literal_p != "":
                 self.literal_p = self.default_literal_p
                 self.literal_p = self.literal_p.replace("X", str(int(self.data)))
-                self.is_literal_numeric = True
             elif self.literal_n != "":
                 self.literal_n = self.default_literal_n
                 self.literal_n = self.literal_n.replace("X", str(int(self.data)))
-                self.is_literal_numeric = True
         else:
-            #print("No 'X' character found, could be a boolean literal")
             self.is_literal_numeric = False
             
 
@@ -66,13 +68,35 @@ class Actuator:
         self.setup_fcn = setup_fcn
 
     def actuator_setup(self):
-        size = len(self.pin)
-        if size == 1:
-            self.setup_fcn(self.pin[0])
-        elif size == 2:
-            self.setup_fcn(self.pin[0],self.pin[1])
-        elif size == 3:
-            self.setup_fcn(self.pin[0],self.pin[1],self.pin[2])
+        if self.setup_fcn == None:
+            return
         else:
-            self.setup_fcn(self.pin[0],self.pin[1],self.pin[2],self.pin[3])
+            size = len(self.pin)
+            if size == 1:
+                self.setup_fcn(self.pin[0])
+            elif size == 2:
+                self.setup_fcn(self.pin[0],self.pin[1])
+            elif size == 3:
+                self.setup_fcn(self.pin[0],self.pin[1],self.pin[2])
+            elif size == 4:
+                self.setup_fcn(self.pin[0],self.pin[1],self.pin[2],self.pin[3])
+            else:
+                print("Error notify dev, allowed setup pins exceeded for " + self.actuator_id)
 
+    def actuator_action(self): #function used to retrieve data from actuator
+        if self.pin == None:
+            self.action_fcn()
+        else:
+            size = len(self.pin)
+            if size == 1:
+                self.data = self.action_fcn(self.pin[0])
+            elif size == 2:
+                self.data = self.action_fcn(self.pin[0],self.pin[1])
+            elif size == 3:
+                self.data = self.action_fcn(self.pin[0],self.pin[1],self.pin[2])
+            elif size == 4:
+                self.data = self.action_fcn(self.pin[0],self.pin[1],self.pin[2],self.pin[3])
+            else:
+                print("Error notify dev, allowed action pins exceeded for " + self.actuator_id)
+
+    #def pop_literal_arr(self):
