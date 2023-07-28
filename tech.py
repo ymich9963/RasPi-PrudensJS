@@ -17,4 +17,4 @@ act_array = [cf.Actuator("",0,"",None,None) for i in range(4)] #initialising arr
 act_array[0] = cf.Actuator("LED1", [3], "blinkLED1slow", led.blinkLEDslow, led.setupLED)
 act_array[1] = cf.Actuator("LED2", [4], "onLED2", led.onLED, led.setupLED)
 act_array[2] = cf.Actuator("LED1", [3], "blinkLED1fast", led.blinkLEDfast, None) #use None for setup function when having duplicate actions for actuators
-act_array[3] = cf.Actuator("Standby", None, "sysStandby", fcn.sysStandby, None)
+act_array[3] = cf.Actuator("all_LED_off", None, "all_LED_off", led.all_offLED, None)

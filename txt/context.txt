@@ -1,1 +1,1 @@
-dist(17);-btn1_pressed;
+dist(15);-btn1_pressed;

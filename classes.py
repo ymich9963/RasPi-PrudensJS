@@ -14,10 +14,10 @@ class Sensor:
         self.default_literal_n = literal_n
 
     def sensor_setup(self):
-        size = len(self.pin)
         if self.setup_fcn == None:
             return
         else:
+            size = len(self.pin)
             if size == 1:
                 self.setup_fcn(self.pin[0])
             elif size == 2:
@@ -30,16 +30,19 @@ class Sensor:
                 print("Error notify dev, allowed pins exceeded for " + self.sensor_id)  
             
     def sensor_action(self): #function used to retrieve data from sensor
-        size = len(self.pin)
-        self.prev_data = self.data
-        if size == 1:
-            self.data = self.action_fcn(self.pin[0])
-        elif size == 2:
-            self.data = self.action_fcn(self.pin[0],self.pin[1])
-        elif size == 3:
-            self.data = self.action_fcn(self.pin[0],self.pin[1],self.pin[2])
+        if self.action_fcn == None: #if any mistake happens in initialisation and there an empty entry, ignore it
+            return
         else:
-            self.data = self.action_fcn(self.pin[0],self.pin[1],self.pin[2],self.pin[3])
+            size = len(self.pin)
+            self.prev_data = self.data
+            if size == 1:
+                self.data = self.action_fcn(self.pin[0])
+            elif size == 2:
+                self.data = self.action_fcn(self.pin[0],self.pin[1])
+            elif size == 3:
+                self.data = self.action_fcn(self.pin[0],self.pin[1],self.pin[2])
+            else:
+                self.data = self.action_fcn(self.pin[0],self.pin[1],self.pin[2],self.pin[3])
 
     def data_in_literal(self): #fcn used to replace the X in a numerical input to the context
         if "X" in self.literal_p:

@@ -2,9 +2,9 @@
     R1 :: dist(X), ?checkFar(X) implies blinkLED1slow;
     R2 :: dist(X), ?checkClose(X) implies blinkLED1fast;
     C1 :: blinkLED1fast # blinkLED1slow;
-    R3 :: btn1_pressed implies sysStandby;
-    C2 :: blinkLED1slow # sysStandby;
-    C3 :: blinkLED1fast # sysStandby;
+    R3 :: btn1_pressed implies all_LED_off;
+    C2 :: blinkLED1slow # all_LED_off;
+    C3 :: blinkLED1fast # all_LED_off;
   
 @Code
 function checkFar(x) {

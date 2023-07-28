@@ -1,6 +1,7 @@
 import sys_fcns as fcn
 from drivers import button as btn
 import tech as tech
+import os
 
 for sensor in tech.sens_array: #for-loops to setup each sensor specified
     sensor.sensor_setup()
@@ -9,15 +10,19 @@ for actuator in tech.act_array:
     actuator.actuator_setup()
 
 version = 0
-print("\n-----------------------------------\nPolicy version " + str(version) +" is being used")
+print("\n-----------------------------------\nPolicy level " + str(version) +" is being used")
 
 while True:
+    #copies driver files found on USB
+    if os.path.exists("//media/yiannis/DRIVER_USB/RasPi-PrudensJS/drivers/") and not os.path.exists("~/cyens/drivers/drivers"):
+        os.system("cp -r //media/yiannis/DRIVER_USB/RasPi-PrudensJS/drivers ~/cyens/drivers")
+
     toContext = ""
 #code for changing policy version######################
     pf = open("/home/yiannis/cyens/txt/policy.txt", "w")
     if btn.btn_is_pressed(2):
         version += 1
-        print("Policy version " + str(version) +" is being used")
+        print("Policy level " + str(version) +" is being used \033[K")
         if version > 4:
             version = 1
     if version == 4:
@@ -61,21 +66,15 @@ while True:
         f.write(toContext)
     
     conclusions = fcn.subproc()
-    #print(conclusions)
+    print("Conclusions: " + str(conclusions), end=' ')
     
     for actuator in tech.act_array:
         if actuator.literal in conclusions:
             actuator.actuator_action()
+        else:
+            print("(x)" + actuator.literal + ", ", end=' ',)
 
-
-    # if "blinkLED1slow" in conclusions:
-    #     fcn.blinkLEDslow(3)
-    # elif "blinkLED1fast" in conclusions:
-    #     fcn.blinkLEDfast(3)
-    # elif "onLED2" in conclusions:
-    #     fcn.onLED(4)
-    # elif "sysStandby" in conclusions:
-    #     fcn.sysStandby()
+    print("\033[F")
     
     # for sensor in sensors:
     #     type_of_sensor = typeof(sensor) 
@@ -89,5 +88,5 @@ while True:
 
     for sensor in tech.sens_array:
         if getattr(sensor, "sensor_id") == "USR1":
-            print('Distance: ' + str(sensor.data) + '                                  ', end='\r')
+            print('\nDistance: ' + str(sensor.data), end='\033[F')
             break
