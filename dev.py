@@ -18,29 +18,13 @@ try:
         pf = open("/home/yiannis/cyens/txt/policy.txt", "w")
         if btn.btn_is_pressed(2):
             version += 1
-            if version > 4:
+            if version > 7:
                 version = 1
-            print("Policy level " + str(version) +" is being used \033[K")
-        if version == 4:
-            with open("/home/yiannis/cyens/txt/policy4.txt", "r") as policy:
-                data = policy.read()
-            pf.write(data)
-        elif version == 3:
-            with open("/home/yiannis/cyens/txt/policy3.txt", "r") as policy:
-                data = policy.read()
-            pf.write(data)
-        elif version == 2:
-            with open("/home/yiannis/cyens/txt/policy2.txt", "r") as policy:
-                data = policy.read()
-            pf.write(data)
-        elif version == 1:
-            with open("/home/yiannis/cyens/txt/policy1.txt", "r") as policy:
-                data = policy.read()
-            pf.write(data)
-        elif version == 0:
-            with open("/home/yiannis/cyens/txt/policy0.txt", "r") as policy:
-                data = policy.read()
-            pf.write(data)
+        print("Policy level " + str(version) +" is being used \033[K")
+        path = "/home/yiannis/cyens/txt/policy"+str(version)+".txt"
+        with open(path, "r") as policy:
+            data = policy.read()
+        pf.write(data)
         pf.close()
 ##############################
 
@@ -61,21 +45,21 @@ try:
             f.write(toContext)
         
         conclusions = fcn.subproc()
-        print("\nConclusions: ", conclusions)
-        
+                
+        used_literals = ""
         for actuator in tech.act_array:
             if actuator.literal in conclusions:
                 actuator.actuator_action()
             else:
-                print("(x)" + actuator.literal, end=', ')
+                used_literals = "(x)" + actuator.literal
                 pass
-        print("")
-
+        
         for sensor in tech.sens_array:
             if getattr(sensor, "sensor_id") == "USR1":
                 #print('\nDistance: ',sensor.data)
                 break
 
+        print("\nConclusions: ", conclusions, "\n", used_literals )
         #fcn.print_adc_readings()
 except Exception as exc:
     print(exc)
@@ -83,6 +67,3 @@ except Exception as exc:
 finally:                                         
     print("Exited loop")
     fcn.sys_exit()
-    spi.close()
-
-

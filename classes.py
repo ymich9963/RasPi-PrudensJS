@@ -33,7 +33,7 @@ class Sensor:
     def sensor_action(self): #function used to retrieve data from sensor
         if self.adc_fcn != None:
             self.data = self.adc_fcn(self.pin_or_channel)
-            self.action_fcn(self.data)
+            self.data = self.action_fcn(self.data)
             return
         elif self.action_fcn == None: #if any mistake happens in initialisation and there an empty entry, ignore it
             return

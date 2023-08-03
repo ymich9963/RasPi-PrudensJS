@@ -1,1 +1,1 @@
-dist(100);-btn1_pressed;temp(93);light_intensity(924);pot_value(1);
+dist(6);temp(27);light_intensity(240);pot_value(0);

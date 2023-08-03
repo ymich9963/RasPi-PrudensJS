@@ -11,12 +11,6 @@
     C6 :: onLED2 # all_LED_off;
     R5 :: pot_value(X), ?checkPot(X) implies rgb_led_magenta_on;
     R6 :: pot_value(X), -?checkPot(X) implies rgb_led_magenta_off;
-    R7 :: temp(X), ?checkTemp(X) implies rgb_led_red_on;
-    R8 :: temp(X), -?checkTemp(X) implies rgb_led_red_off;
-    R9 :: rgb_led_red_off, pot_value(X), ?checkPot(X) implies rgb_led_magenta_on;
-    C7 :: rgb_led_magenta_on # rgb_led_red_off;
-   R10 :: light_intensity(X), ?checkLight(X) implies rgb_led_yellow_on;
-   R11 :: light_intensity(X), -?checkLight(X), temp(X), -?checkTemp(X), pot_value(X), -?checkPot(X) implies rgb_led_yellow_off;
     
 @Code
 function checkFar(x) {
@@ -24,10 +18,4 @@ function checkFar(x) {
 }
 function checkPot(x) {
     return parseFloat(x) < 3;
-}
-function checkTemp(x) {
-    return parseFloat(x) > 28
-}
-function checkLight(x) {
-    return parseFloat(x) < 200
 }

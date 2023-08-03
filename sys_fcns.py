@@ -13,6 +13,8 @@ spi.max_speed_hz = 250000
 def subproc():
     proc = subprocess.Popen(["/usr/bin/node","/home/yiannis/cyens/prudens-js/node/app.js", ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = proc.communicate()
+    #print(out)
+    #print(err)
     json_out = json.loads(out)
     proc.terminate()
     return list(json_out["graph"].keys())
@@ -27,6 +29,7 @@ def adc_read(channel):
 def sys_exit():
     GPIO.cleanup()
     sys.exit(0)
+    spi.close()
 
 def sys_restart():
     GPIO.cleanup()

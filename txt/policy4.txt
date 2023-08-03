@@ -1,11 +1,11 @@
 @KnowledgeBase
     R1 :: dist(X), ?checkFar(X) implies blinkLED1slow;
-    R2 :: dist(X), ?checkClose(X) implies blinkLED1fast;
+    R2 :: dist(X), -?checkFar(X) implies blinkLED1fast;
     C1 :: blinkLED1fast # blinkLED1slow;
     R3 :: btn1_pressed implies all_LED_off;
     C2 :: blinkLED1slow # all_LED_off;
     C3 :: blinkLED1fast # all_LED_off;
-    R4 :: all_LED_off, dist(X), ?checkClose(X) implies onLED2;
+    R4 :: all_LED_off, dist(X), -?checkFar(X) implies onLED2;
     C4 :: onLED2 # blinkLED1slow;
     C5 :: onLED2 # blinkLED1fast;
     C6 :: onLED2 # all_LED_off;
@@ -13,7 +13,4 @@
 @Code
 function checkFar(x) {
     return parseFloat(x) > 10;
-}
-function checkClose(x) {
-    return parseFloat(x) < 10;
 }
