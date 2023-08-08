@@ -11,12 +11,12 @@ def setupLED(pin):
 
 def blinkLEDslow(pin):
     GPIO.output(pin, 1)
-    sleep(1)
+    sleep(0.5)
     GPIO.output(pin, 0)
     
 def blinkLEDfast(pin):
     GPIO.output(pin, 1)
-    sleep(0.2)
+    sleep(0.05)
     GPIO.output(pin, 0)
 
 def onLED(pin):

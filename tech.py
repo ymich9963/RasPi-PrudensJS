@@ -20,7 +20,9 @@ sens_array = [
     cf.Sensor("BTN2",[2],"","",btn.btn_is_pressed,btn.setupButton),
     cf.Sensor("TEMP1",1,"temp(X);","",temp.getTemp, adc_fcn = fcn.adc_read),
     cf.Sensor("LIGHT1",2,"light_intensity(X);","",light.getLightInt, adc_fcn = fcn.adc_read),
-    cf.Sensor("POT1",0,"pot_value(X);","",pot.getPotValue, adc_fcn = fcn.adc_read)
+    cf.Sensor("POT1",0,"pot_value(X);","",pot.getPotValue, adc_fcn = fcn.adc_read),
+    cf.Sensor("BTN3",[27],"","",btn.btn_is_pressed,btn.setupButton),
+
 ]
 
 act_array = [

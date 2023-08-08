@@ -2,32 +2,35 @@ import sys_fcns as fcn
 from drivers import button as btn
 import tech as tech
 
-for sensor in tech.sens_array: #for-loops to setup each sensor specified
+for sensor in tech.sens_array:
     sensor.sensor_setup()
 
 for actuator in tech.act_array:
     actuator.actuator_setup()
 
 version = 0
-print("\n-----------------------------------\nPolicy level " + str(version) +" is being used")
+max_policy_num = 8
+print("\n-----------------------------------")
 
 try:
     while True:
         toContext = ""
-###########################
+
+########################## code to output policy level in terminal
         pf = open("/home/yiannis/cyens/txt/policy.txt", "w")
         if btn.btn_is_pressed(2):
             version += 1
-            if version > 7:
-                version = 1
-        print("Policy level " + str(version) +" is being used \033[K")
-        path = "/home/yiannis/cyens/txt/policy"+str(version)+".txt"
+        print("Policy level " + str(version % max_policy_num) +" is being used \033[K")
+        path = "/home/yiannis/cyens/txt/policy"+str(version % max_policy_num)+".txt"
         with open(path, "r") as policy:
             data = policy.read()
         pf.write(data)
         pf.close()
 ##############################
 
+        if btn.btn_is_pressed(27):
+            fcn.sys_restart(tech.sens_array, tech.act_array, module = tech)
+        
         fcn.copy_from_USB()
         #fcn.manual_all_adc_sensor_read()
     
@@ -40,30 +43,26 @@ try:
                 toContext += sensor.literal_n
             else:
                 print("Error call dev")
-                
-        with open("/home/yiannis/cyens/txt/context.txt","w") as f:
-            f.write(toContext)
-        
-        conclusions = fcn.subproc()
+                    
+        conclusions = fcn.subproc(toContext)
                 
         used_literals = ""
         for actuator in tech.act_array:
             if actuator.literal in conclusions:
                 actuator.actuator_action()
-            else:
-                used_literals = "(x)" + actuator.literal
-                pass
-        
-        for sensor in tech.sens_array:
+                        
+        for sensor in tech.sens_array: 
             if getattr(sensor, "sensor_id") == "USR1":
                 #print('\nDistance: ',sensor.data)
                 break
 
-        print("\nConclusions: ", conclusions, "\n", used_literals )
+        print("\nConclusions: ", conclusions)
         #fcn.print_adc_readings()
+
 except Exception as exc:
     print(exc)
     raise 
+
 finally:                                         
     print("Exited loop")
     fcn.sys_exit()
