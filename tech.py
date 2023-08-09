@@ -11,7 +11,8 @@ from drivers import DFR0025_light as light
 from drivers import potentiometre as pot
 from drivers import RGBled as rgb
 
-GPIO.setmode(GPIO.BCM) #use GPIO numbers instead of board pin numbers
+#use GPIO numbers instead of board pin numbers
+GPIO.setmode(GPIO.BCM) 
 
 #declaring sensors and actuators as objects
 sens_array = [

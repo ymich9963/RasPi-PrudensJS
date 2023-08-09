@@ -1,9 +1,2 @@
 @KnowledgeBase
-    R1 :: dist(X), ?checkFar(X) implies blinkLED1slow;
-    R2 :: dist(X), -?checkFar(X) implies blinkLED1fast;
-    C1 :: blinkLED1fast # blinkLED1slow;
- 
-@Code
-function checkFar(x) {
-    return parseFloat(x) > 10;
-}
+;
