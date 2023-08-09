@@ -60,7 +60,7 @@ def sys_exit():
     sys.exit(0)
 
 
-def sys_restart(sens_array, act_array, module = tech):
+def sys_restart(sens_array, act_array, module):
     """Restart the program my re-initialising the setup
 
     Args:
