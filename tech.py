@@ -1,3 +1,33 @@
+"""
+    Technician makes modifications here when installing new sensors and acuators.
+    If a sensor/actuator is commented out the program will still work. The driver
+    has to be imported by being placed in the /drivers directory. This can happen automatically
+    by using a USB named DRIVER_USB with a directory of /DRIVER_USB/RasPi-PrudensJS/drivers.
+
+    Sensor declaration format,
+        cf.Sensor(
+            Sensor ID,
+            pin or channel,
+            positive literal,
+            negative literal,
+            action function,
+            setup function,
+            adc_function
+        )
+
+    Actuator declaration format,
+        cf.Actuator(
+            actuator ID,
+            pin,
+            literal,
+            action function,
+            setup function
+        )
+
+"""
+
+
+
 import RPi.GPIO as GPIO
 import classes as cf
 import sys_fcns as fcn
@@ -16,7 +46,7 @@ GPIO.setmode(GPIO.BCM)
 
 #declaring sensors and actuators as objects
 sens_array = [
-    cf.Sensor("USR1",[17,18],"dist(X);","",usr.getDist,usr.setupUSR),
+    cf.Sensor("USR1",[17,15],"dist(X);","",usr.getDist,usr.setupUSR),
     cf.Sensor("BTN1",[24],"btn1_pressed;","",btn.btn_is_held,btn.setupButton),
     cf.Sensor("BTN2",[2],"","",btn.btn_is_pressed,btn.setupButton),
     cf.Sensor("TEMP1",1,"temp(X);","",temp.getTemp, adc_fcn = fcn.adc_read),

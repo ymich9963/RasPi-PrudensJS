@@ -1,3 +1,7 @@
+"""
+    Small script to test an ADC with an SPI connection.
+"""
+
 import spidev
 
 # Enable SPI

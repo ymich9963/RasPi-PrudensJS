@@ -1,3 +1,7 @@
+"""
+    Driver for LEDs. Contains the setup function and any action functions.
+"""
+
 import RPi.GPIO as GPIO
 from time import sleep
 
@@ -13,11 +17,13 @@ def blinkLEDslow(pin):
     GPIO.output(pin, 1)
     sleep(0.5)
     GPIO.output(pin, 0)
+    sleep(0.5)
     
 def blinkLEDfast(pin):
     GPIO.output(pin, 1)
     sleep(0.05)
     GPIO.output(pin, 0)
+    sleep(0.05)
 
 def onLED(pin):
     GPIO.output(pin, 1)

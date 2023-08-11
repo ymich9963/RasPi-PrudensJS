@@ -1,61 +1,66 @@
+"""
+    Driver for an RGB. Contains the setup function, reset and on/off for each colour.
+"""
+
+
 import RPi.GPIO as GPIO
 
 GPIO.setmode(GPIO.BCM)
 
-def reset_rgb_led(pin1, pin2, pin3):
-    GPIO.output([pin1, pin2, pin3], 0)
+def reset_rgb_led(red_pin, green_pin, blue_pin):
+    GPIO.output([red_pin, green_pin, blue_pin], 0)
 
-def rgb_setup(pin1, pin2, pin3):
-    GPIO.setup(pin1, GPIO.OUT)
-    GPIO.setup(pin2, GPIO.OUT)
-    GPIO.setup(pin3, GPIO.OUT)
-    reset_rgb_led(pin1, pin2, pin3)
+def rgb_setup(red_pin, green_pin, blue_pin):
+    GPIO.setup(red_pin, GPIO.OUT)
+    GPIO.setup(green_pin, GPIO.OUT)
+    GPIO.setup(blue_pin, GPIO.OUT)
+    reset_rgb_led(red_pin, green_pin, blue_pin)
 
-def on_white(pin1, pin2, pin3):
-    reset_rgb_led(pin1, pin2, pin3)
-    GPIO.output([pin1, pin2, pin3], 1)
+def on_white(red_pin, green_pin, blue_pin):
+    reset_rgb_led(red_pin, green_pin, blue_pin)
+    GPIO.output([red_pin, green_pin, blue_pin], 1)
 
-def off_white(pin1, pin2, pin3):
-    GPIO.output([pin1, pin2, pin3], 0)
+def off_white(red_pin, green_pin, blue_pin):
+    GPIO.output([red_pin, green_pin, blue_pin], 0)
     
-def on_red(pin1, pin2, pin3):
-    reset_rgb_led(pin1, pin2, pin3)
-    GPIO.output(pin1, 1)
+def on_red(red_pin, green_pin, blue_pin):
+    reset_rgb_led(red_pin, green_pin, blue_pin)
+    GPIO.output(red_pin, 1)
 
-def off_red(pin1, pin2, pin3):
-    GPIO.output(pin1, 0)
+def off_red(red_pin, green_pin, blue_pin):
+    GPIO.output(red_pin, 0)
 
-def on_green(pin1, pin2, pin3):
-    reset_rgb_led(pin1, pin2, pin3)
-    GPIO.output(pin2, 1)
+def on_green(red_pin, green_pin, blue_pin):
+    reset_rgb_led(red_pin, green_pin, blue_pin)
+    GPIO.output(green_pin, 1)
 
-def off_green(pin1, pin2, pin3):
-    GPIO.output(pin2, 0)
+def off_green(red_pin, green_pin, blue_pin):
+    GPIO.output(green_pin, 0)
     
-def on_blue(pin1, pin2, pin3):
-    reset_rgb_led(pin1, pin2, pin3)
-    GPIO.output(pin3, 1)
+def on_blue(red_pin, green_pin, blue_pin):
+    reset_rgb_led(red_pin, green_pin, blue_pin)
+    GPIO.output(blue_pin, 1)
 
-def off_blue(pin1, pin2, pin3):
-    GPIO.output(pin3, 0)
+def off_blue(red_pin, green_pin, blue_pin):
+    GPIO.output(blue_pin, 0)
 
-def on_yellow(pin1, pin2, pin3):
-    reset_rgb_led(pin1, pin2, pin3)
-    GPIO.output([pin1, pin2], 1)
+def on_yellow(red_pin, green_pin, blue_pin):
+    reset_rgb_led(red_pin, green_pin, blue_pin)
+    GPIO.output([red_pin, green_pin], 1)
 
-def off_yellow(pin1, pin2, pin3):
-    GPIO.output([pin1, pin2], 0)
+def off_yellow(red_pin, green_pin, blue_pin):
+    GPIO.output([red_pin, green_pin], 0)
 
-def on_cyan(pin1, pin2, pin3):
-    reset_rgb_led(pin1, pin2, pin3)
-    GPIO.output([pin2, pin3], 1)
+def on_cyan(red_pin, green_pin, blue_pin):
+    reset_rgb_led(red_pin, green_pin, blue_pin)
+    GPIO.output([green_pin, blue_pin], 1)
 
-def off_cyan(pin1, pin2, pin3):
-    GPIO.output([pin2, pin3], 0)
+def off_cyan(red_pin, green_pin, blue_pin):
+    GPIO.output([green_pin, blue_pin], 0)
 
-def on_magenta(pin1, pin2, pin3):
-    reset_rgb_led(pin1, pin2, pin3)
-    GPIO.output([pin1, pin3], 1)
+def on_magenta(red_pin, green_pin, blue_pin):
+    reset_rgb_led(red_pin, green_pin, blue_pin)
+    GPIO.output([red_pin, blue_pin], 1)
 
-def off_magenta(pin1, pin2, pin3):
-    GPIO.output([pin1, pin3], 0)
+def off_magenta(red_pin, green_pin, blue_pin):
+    GPIO.output([red_pin, blue_pin], 0)

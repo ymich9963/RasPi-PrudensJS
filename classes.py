@@ -1,8 +1,10 @@
 """
-This Python file contains the two classes used in the system, Sensors and Actuators. Due to the 
+
+Contains the two classes used in the system, Sensors and Actuators. Due to the 
 common functions they have they can have a parent class in future implementations. The action and setup functions
 require the driver file to be in the /drivers location. Currently all drivers
 are coded specifically for the system and no libraries are used.
+
 """
 
 class Sensor:
@@ -18,9 +20,9 @@ class Sensor:
 
         default_literal_n: Same as above
 
-        sensor_id (str, optional): ID for each sensor, duplicates are currently allowed. Defaults to "".
+        sensor_id (str): ID for each sensor, duplicates are currently allowed.
 
-        pin_or_channel (int or list, optional): Can be an array or an int but that depends if adc_fcn is not set to None. Defaults to [0].
+        pin_or_channel (int or list): Can be an array or an int but that depends if adc_fcn is not set to None.
 
         literal_p (str, optional): The positive literal used by the sensor for the Context. Defaults to "".
 
@@ -37,7 +39,7 @@ class Sensor:
     is_literal_numeric = False
     default_literal_p = ""
     default_literal_n = ""
-    def __init__(self, sensor_id = "", pin_or_channel = [0], literal_p = "", literal_n = "", action_fcn = None, setup_fcn = None, adc_fcn = None):
+    def __init__(self, sensor_id, pin_or_channel, literal_p = "", literal_n = "", action_fcn = None, setup_fcn = None, adc_fcn = None):
         
         self.sensor_id = sensor_id
         self.pin_or_channel = pin_or_channel
@@ -107,13 +109,13 @@ class Sensor:
             
 
 class Actuator:
-    def __init__(self, actuator_id = "", pin = [0], literal = "", action_fcn = None, setup_fcn = None):
+    def __init__(self, actuator_id, pin, literal = "", action_fcn = None, setup_fcn = None):
         """Actuator object contains all of the actuator data.
 
         Args:
-            actuator_id (str, optional): ID for each actuator, duplicates are currently allowed. Defaults to "".
+            actuator_id (str): ID for each actuator, duplicates are currently allowed. Defaults to "".
 
-            pin (list, optional): Pin used by the actuator. Defaults to [0].
+            pin (list): Pin used by the actuator. Defaults to [0].
 
             literal (str, optional): Literal to detect in order to use it. Defaults to "".
 
