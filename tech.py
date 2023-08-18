@@ -49,7 +49,7 @@ sens_array = [
     cf.Sensor("USR1",[17,15],"dist(X);","",usr.getDist,usr.setupUSR),
     cf.Sensor("BTN1",[24],"btn1_pressed;","",btn.btn_is_held,btn.setupButton),
     cf.Sensor("BTN2",[2],"","",btn.btn_is_pressed,btn.setupButton),
-    cf.Sensor("TEMP1",1,"temp(X);","",temp.getTemp, adc_fcn = fcn.adc_read),
+    #cf.Sensor("TEMP1",1,"temp(X);","",temp.getTemp, adc_fcn = fcn.adc_read),
     cf.Sensor("LIGHT1",2,"light_intensity(X);","",light.getLightInt, adc_fcn = fcn.adc_read),
     cf.Sensor("POT1",0,"pot_value(X);","",pot.getPotValue, adc_fcn = fcn.adc_read),
     cf.Sensor("BTN3",[27],"","",btn.btn_is_pressed,btn.setupButton),
