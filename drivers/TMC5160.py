@@ -110,96 +110,96 @@ GPIO.output(5 , 0) #DRV_EN
 
 #Started example from Trinamic
 data = data_builder("GCONF", [0x00, 0x00, 0x00, 0x0C], "W")
-print(data, end='---')
+#print(data, end='---')
 response = spi_motor1.xfer2(data)
-print(response)
+#print(response)
 
 data = data_builder("CHOPCONF", [0x00, 0x01, 0x00, 0xC3], "W")
-print(data, end='---')
+#print(data, end='---')
 response = spi_motor1.xfer2(data)
-print(response)
+#print(response)
 
 data = data_builder("IHOLD_IRUN", [0x00, 0x80, 0x0F, 0x0A], "W")
-print(data, end='---')
+#print(data, end='---')
 response = spi_motor1.xfer2(data)
-print(response)
+#print(response)
 
 data = data_builder("TPOWERDOWN", [0x00, 0x00, 0x00, 0x0A], "W")
-print(data, end='---')
+#print(data, end='---')
 response = spi_motor1.xfer2(data)
-print(response)
+#print(response)
 
 data = data_builder("TPWMTHRS", [0x00, 0x00, 0x01, 0xF4], "W")
-print(data, end='---')
+#print(data, end='---')
 response = spi_motor1.xfer2(data)
-print(response)
+#print(response)
 
 #Values for speed and acceleration
 data = data_builder("VSTART", [0x00, 0x00, 0x00, 0x01], "W")
-print(data, end='---')
+#print(data, end='---')
 response = spi_motor1.xfer2(data)
-print(response)
+#print(response)
 
 data = data_builder("A1", [0x00, 0x00, 0x13, 0x88], "W")
-print(data, end='---')
+#print(data, end='---')
 response = spi_motor1.xfer2(data)
-print(response)
+#print(response)
 
 data = data_builder("V1", [0x00, 0x00, 0x68, 0xDB], "W")
-print(data, end='---')
+#print(data, end='---')
 response = spi_motor1.xfer2(data)
-print(response)
+#print(response)
 
 data = data_builder("AMAX", [0x00, 0x00, 0x13, 0x88], "W")
-print(data, end='---')
+#print(data, end='---')
 response = spi_motor1.xfer2(data)
-print(response)
+#print(response)
 
 data = data_builder("VMAX", [0x00, 0x01, 0x86, 0xA0], "W")
-print(data, end='---')
+#print(data, end='---')
 response = spi_motor1.xfer2(data)
-print(response)
+#print(response)
 
 data = data_builder("DMAX", [0x00, 0x00, 0x13, 0x88], "W")
-print(data, end='---')
+#print(data, end='---')
 response = spi_motor1.xfer2(data)
-print(response)
+#print(response)
 
 data = data_builder("D1", [0x00, 0x00, 0x13, 0x88], "W")
-print(data, end='---')
+#print(data, end='---')
 response = spi_motor1.xfer2(data)
-print(response)
+#print(response)
 
 data = data_builder("VSTOP", [0x00, 0x00, 0x00, 0x0A], "W")
-print(data, end='---')
+#print(data, end='---')
 response = spi_motor1.xfer2(data)
-print(response)
+#print(response)
 
 data = data_builder("RAMPMODE", [0x00, 0x00, 0x00, 0x00], "W")
-print(data, end='---')
+#print(data, end='---')
 response = spi_motor1.xfer2(data)
-print(response)        
+#print(response)        
 
 def _action():
     try:
         data = data_builder("XACTUAL", [0x00, 0x00, 0x00, 0x00], "R")
         response = spi_motor1.xfer2(data)
-        print("Reply: ", response)
+        #print("Reply: ", response)
 
         data = data_builder("XTARGET", [0x00, 0x07, 0xD0, 0x00], "W")
         response = spi_motor1.xfer2(data)
-        print("Writing...")
+        #print("Writing...")
 
         sleep(1)
 
         data = data_builder("XACTUAL", [0x00, 0x00, 0x00, 0x00], "R")
         response = spi_motor1.xfer2(data)
-        print("Reply: ", response)
+        #print("Reply: ", response)
 
 
         data = data_builder("XTARGET", [0x00, 0x00, 0x00, 0x00], "W")
         response = spi_motor1.xfer2(data)
-        print("Writing...")
+        #print("Writing...")
 
         sleep(1)
     finally:
@@ -207,11 +207,11 @@ def _action():
         GPIO.output(22, 0) #to reset motor registers
         GPIO.output(22, 1)
         #GPIO.cleanup()
-        print("Exited gracefully")
+        #print("Exited gracefully")
 
 def stop():
     #spi.close()
     GPIO.output(22, 0) #to reset motor registers
     GPIO.output(22, 1)
     #GPIO.cleanup()
-    print("Exited gracefully")
+    #print("Exited gracefully")

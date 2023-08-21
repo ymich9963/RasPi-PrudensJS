@@ -1,5 +1,5 @@
 import RPi.GPIO as GPIO
-import subprocess, json, sys, spidev, os, importlib
+import subprocess, json, sys, spidev, os, importlib, threading, queue
 
 GPIO.setmode(GPIO.BCM)
 
@@ -37,6 +37,18 @@ def subproc(context_inp):
     json_out = json.loads(out)
     return list(json_out["graph"].keys())
 
+def change_policy_version(version, max_policy_num):
+    """
+        code to change policy level, 
+        will not be in the final version, temporarily simulates user input
+    """
+    pf = open("/home/yiannis/cyens/txt/policy.txt", "w")
+    path = "/home/yiannis/cyens/txt/policy"+str(version % max_policy_num)+".txt"
+    with open(path, "r") as policy:
+        data = policy.read()
+    pf.write(data)
+    pf.close()
+
 def adc_read(channel):
     """Read a single value from ADC. 
 
@@ -46,9 +58,7 @@ def adc_read(channel):
     Returns:
         int: Returns ADC value
     """
-    #First value is ANDed with 0b11  and shifted by 8 to the left,
-    #then the 2nd value is added
-    msg = [0b1, (0b1000 + channel) << 4, 0]
+    msg = [0b1, (0b1000 + channel) << 4, 0] #First value is ANDed with 0b11  and shifted by 8 to the left,then the 2nd value is added
     d_out = spi.xfer2(msg)
     adc_out = ((d_out[1] & 0b11) << 8) + d_out[2]  
     return adc_out

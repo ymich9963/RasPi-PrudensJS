@@ -92,22 +92,22 @@ try:
         response = spi.xfer2(data)
         print("Reply: ", response)
 
-        data = reg.data_builder("XTARGET", [0x00, 0x07, 0xD0, 0x00], "W")
-        response = spi.xfer2(data)
-        print("Writing...")
+        # data = reg.data_builder("XTARGET", [0x00, 0x07, 0xD0, 0x00], "W")
+        # response = spi.xfer2(data)
+        # print("Writing...")
 
-        sleep(12)
+        sleep(1)
 
         data = reg.data_builder("XACTUAL", [0x00, 0x00, 0x00, 0x00], "R")
         response = spi.xfer2(data)
         print("Reply: ", response)
 
 
-        data = reg.data_builder("XTARGET", [0x00, 0x00, 0x00, 0x00], "W")
-        response = spi.xfer2(data)
-        print("Writing...")
+        # data = reg.data_builder("XTARGET", [0x00, 0x00, 0x00, 0x00], "W")
+        # response = spi.xfer2(data)
+        # print("Writing...")
 
-        sleep(12)
+        sleep(1)
         
 
 finally:

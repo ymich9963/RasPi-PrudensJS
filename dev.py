@@ -6,6 +6,12 @@
 import sys_fcns as fcn
 from drivers import button as btn
 import tech as tech
+import threading
+
+#to chage policy level, not used in final version
+version = 0
+max_policy_num = 9
+x = None
 
 #initalise peripherals
 for sensor in tech.sens_array:
@@ -14,36 +20,26 @@ for sensor in tech.sens_array:
 for actuator in tech.act_array:
     actuator.actuator_setup()
 
-#to chage policy version,
-#not used in final version
-version = 8
-max_policy_num = 9
-print("\n-----------------------------------")
+print(f"\n--------------START---------------\nStarting with Policy version {version}")
 
-try:
+def program():
+    global version
     while True:
-
         toContext = ""
 
-#       code to change policy level and output to terminal, 
-#       will not be in the final version,
-#       temporarily simulates user input
-        pf = open("/home/yiannis/cyens/txt/policy.txt", "w")
+#       change policy version on button press, and simulate user input
         if btn.btn_is_pressed(2):
             version += 1
-        print("Policy level " + str(version % max_policy_num) +" is being used \033[K")
-        path = "/home/yiannis/cyens/txt/policy"+str(version % max_policy_num)+".txt"
-        with open(path, "r") as policy:
-            data = policy.read()
-        pf.write(data)
-        pf.close()
+            print("\nPolicy level " + str(version % max_policy_num) +" is being used. \n\nEnter new rule: ", end="")
+        fcn.change_policy_version(version, max_policy_num)
 
 
 #       if changes are made to the technician file, 
 #       pressing this button will re-initalise the devices without turning it off
         if btn.btn_is_pressed(27):
             fcn.sys_restart(tech.sens_array, tech.act_array, module = tech)
-        
+
+#       copy files from DRIVER_USB       
         fcn.copy_from_USB()
     
 #       use the sensor, retrieve data, enter it in the literal
@@ -64,13 +60,36 @@ try:
         for actuator in tech.act_array:
             if actuator.literal in conclusions:
                 actuator.actuator_action()
-                        
-        print("\nConclusions: ", conclusions)
 
-except Exception as exc:
-    print(exc)
-    raise 
+#        Output Prudens conclusions for debugging, also displays sensor outputs          
+        #print("\nConclusions: ", conclusions)      
 
-finally:                                         
-    print("Exited loop")
-    fcn.sys_exit()
+def user_input_thread():
+    global version, x
+    while True:
+        x = input("\nEnter new rule: ")
+        if any((char in set('abcdefghijklmnopqrstuvwxyz')) for char in x):
+            version += 1
+            print("Policy level " + str(version % max_policy_num) +" is being used", end="\n")
+    
+
+def main():
+    try:
+        prog_thread = threading.Thread(target=program)
+        inp_thread = threading.Thread(target=user_input_thread)
+
+        prog_thread.start()
+        inp_thread.start()
+
+        prog_thread.join()
+        inp_thread.join()
+
+    except Exception as exc:
+        print(exc)
+        raise 
+
+    finally:                                         
+        print("Exited program")
+        fcn.sys_exit()
+
+main()
