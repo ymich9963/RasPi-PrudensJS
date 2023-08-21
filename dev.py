@@ -16,8 +16,8 @@ for actuator in tech.act_array:
 
 #to chage policy version,
 #not used in final version
-version = 0
-max_policy_num = 8
+version = 8
+max_policy_num = 9
 print("\n-----------------------------------")
 
 try:

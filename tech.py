@@ -40,6 +40,7 @@ from drivers import DFR0023_temp as temp
 from drivers import DFR0025_light as light
 from drivers import potentiometre as pot
 from drivers import RGBled as rgb
+from drivers import TMC5160 as motor
 
 #use GPIO numbers instead of board pin numbers
 GPIO.setmode(GPIO.BCM) 
@@ -49,7 +50,7 @@ sens_array = [
     cf.Sensor("USR1",[17,15],"dist(X);","",usr.getDist,usr.setupUSR),
     cf.Sensor("BTN1",[24],"btn1_pressed;","",btn.btn_is_held,btn.setupButton),
     cf.Sensor("BTN2",[2],"","",btn.btn_is_pressed,btn.setupButton),
-    #cf.Sensor("TEMP1",1,"temp(X);","",temp.getTemp, adc_fcn = fcn.adc_read),
+    cf.Sensor("TEMP1",1,"temp(X);","",temp.getTemp, adc_fcn = fcn.adc_read),
     cf.Sensor("LIGHT1",2,"light_intensity(X);","",light.getLightInt, adc_fcn = fcn.adc_read),
     cf.Sensor("POT1",0,"pot_value(X);","",pot.getPotValue, adc_fcn = fcn.adc_read),
     cf.Sensor("BTN3",[27],"","",btn.btn_is_pressed,btn.setupButton),
@@ -66,5 +67,6 @@ act_array = [
     cf.Actuator("RGB_led",[13, 12, 6], "rgb_led_red_on", rgb.on_red,None),
     cf.Actuator("RGB_led",[13, 12, 6], "rgb_led_red_off", rgb.off_red,None),
     cf.Actuator("RGB_led",[13, 12, 6], "rgb_led_yellow_on", rgb.on_yellow,None),
-    cf.Actuator("RGB_led",[13, 12, 6], "rgb_led_yellow_off", rgb.off_yellow,None)
+    cf.Actuator("RGB_led",[13, 12, 6], "rgb_led_yellow_off", rgb.off_yellow,None),
+    cf.Actuator("Motor", None, "move_motor", motor._action, None)
 ]

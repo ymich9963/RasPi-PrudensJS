@@ -87,7 +87,7 @@ try:
     response = spi.xfer2(data)
     print(response)
 
-    while(1):
+    while True:
         data = reg.data_builder("XACTUAL", [0x00, 0x00, 0x00, 0x00], "R")
         response = spi.xfer2(data)
         print("Reply: ", response)
