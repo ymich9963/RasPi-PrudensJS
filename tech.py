@@ -46,7 +46,7 @@ GPIO.setmode(GPIO.BCM)
 #declaring sensors and actuators as objects
 sens_array = [
     cf.Sensor("USR1",[17,15],"dist(X);","",usr.getDist,usr.setupUSR),
-    cf.Sensor("BTN1",[24],"btn1_pressed;","",btn.btn_is_held,btn.setupButton),
+    cf.Sensor("BTN1",[24],"btn1_pressed;","-btn1_pressed;",btn.btn_is_held,btn.setupButton),
     cf.Sensor("BTN2",[2],"","",btn.btn_is_pressed,btn.setupButton),
     cf.Sensor("TEMP1",1,"temp(X);","",temp.getTemp, adc_fcn = fcn.adc_read),
     cf.Sensor("LIGHT1",2,"light_intensity(X);","",light.getLightInt, adc_fcn = fcn.adc_read),
@@ -57,13 +57,14 @@ sens_array = [
 act_array = [
     cf.Actuator("LED1", [3], "blinkLED1slow", led.blinkLEDslow, led.setupLED),
     cf.Actuator("LED2", [4], "onLED2", led.onLED, led.setupLED),
+    cf.Actuator("LED2", [4], "offLED2", led.offLED, None),
     cf.Actuator("LED1", [3], "blinkLED1fast", led.blinkLEDfast, None), #use None for setup function when having duplicate actions for actuators
     cf.Actuator("all_LED_off", None, "all_LED_off", led.all_offLED, None),
-    cf.Actuator("RGB_led",[13, 12, 6], "rgb_led_magenta_on", rgb.on_magenta,rgb.rgb_setup), #pins 13 and 12 are PWM pins
-    cf.Actuator("RGB_led",[13, 12, 6], "rgb_led_magenta_off", rgb.off_magenta,None),
-    cf.Actuator("RGB_led",[13, 12, 6], "rgb_led_red_on", rgb.on_red,None),
+    cf.Actuator("RGB_led",[13, 12, 6], "rgb_led_red_on", rgb.on_red,rgb.rgb_setup),#pins 13 and 12 are PWM pins (just a FYI)
     cf.Actuator("RGB_led",[13, 12, 6], "rgb_led_red_off", rgb.off_red,None),
     cf.Actuator("RGB_led",[13, 12, 6], "rgb_led_yellow_on", rgb.on_yellow,None),
     cf.Actuator("RGB_led",[13, 12, 6], "rgb_led_yellow_off", rgb.off_yellow,None),
-    cf.Actuator("Motor", None, "move_motor", motor._action, None)
+    cf.Actuator("Motor1", None, "move_motor_1", motor.spin1, None),
+    cf.Actuator("Motor1", None, "stop_motor", motor.stop, None),
+    cf.Actuator("Motor1", None, "move_motor_2", motor.spin2, None)
 ]

@@ -79,3 +79,8 @@ def data_builder(addr, value, rw):
     value.insert(0, addr_value)
 
     return value
+
+# def send_data(adress:str, data:[4], R_W:str):
+#     data = data_builder(address, [0x00, 0x0A, 0x86, 0xA0], R_W)
+#     response =  spi.xfer2(data)
+#     return response

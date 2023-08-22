@@ -62,7 +62,7 @@ def address_resolver(addr):
     return reg_addr[addr]["addr"]
 
 def register_access(addr, rw):
-    """"Checking register access right"""
+    #Checking register access right
     if rw not in reg_addr[addr]["access"]:
         print(f"Error {addr} Register can't be {rw}, system stop.")
         sys.exit(1)
@@ -70,10 +70,12 @@ def register_access(addr, rw):
         return 0
 
 def data_builder(addr, value, rw):
-    """Build data trame.
+    """
+    Build data trame.
     Check for register access, configure MSB and concate into a list.
     input:  register name, list of values, read of write status
-    output: hexadecimal trame list [register_addr, val1, val2, val3, val4]"""
+    output: hexadecimal trame list [register_addr, val1, val2, val3, val4]
+    """
     addr_value = address_resolver(addr)
     register_access(addr, rw)
 
@@ -84,134 +86,53 @@ def data_builder(addr, value, rw):
 
     return value
 
-max_speed_hz = 500000
-spi_mode = 0
-
-spi_motor1 = spidev.SpiDev()
-spi_motor1.open(1,2)  # Open SPI bus 1, device 2
-spi_motor1.mode = spi_mode # could comment out
-spi_motor1.max_speed_hz = max_speed_hz
-
-spi_motor2 = spidev.SpiDev()
-spi_motor2.open(1,1)  # Open SPI bus 1, device 1
-spi_motor2.mode = spi_mode
-spi_motor2.max_speed_hz = max_speed_hz
-
-spi_motor3 = spidev.SpiDev()
-spi_motor3.open(1,0)  # Open SPI bus 1, device 0
-spi_motor3.mode = spi_mode
-spi_motor3.max_speed_hz = max_speed_hz
+spi = spidev.SpiDev()
+spi.open(1,2)  # Open SPI bus 1, device 2
+spi.mode = 0 # could comment out
+spi.max_speed_hz = 500000
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup([22,26,5], GPIO.OUT)
-GPIO.output(22, 1) #Vcc_IO
-GPIO.output(26, 0) #CLK
-GPIO.output(5 , 0) #DRV_EN
+GPIO.output(22, 0) #to reset motor registers at initial setup
+GPIO.output(22, 1)
+GPIO.output(26, 0)
+GPIO.output(5 , 0)
 
-#Started example from Trinamic
-data = data_builder("GCONF", [0x00, 0x00, 0x00, 0x0C], "W")
-#print(data, end='---')
-response = spi_motor1.xfer2(data)
-#print(response)
+"""
+    Can use this format for checking the response, e.g.
+    data = data_builder("GCONF", [0x00, 0x00, 0x00, 0x0C], "W")
+    response = spi.xfer2(data)
+"""
 
-data = data_builder("CHOPCONF", [0x00, 0x01, 0x00, 0xC3], "W")
-#print(data, end='---')
-response = spi_motor1.xfer2(data)
-#print(response)
+#set max speed to 0, first execution as to not allow motor to false start
+spi.xfer2(data_builder("VMAX", [0x00, 0x00, 0x00, 0x00], "W"))
 
-data = data_builder("IHOLD_IRUN", [0x00, 0x80, 0x0F, 0x0A], "W")
-#print(data, end='---')
-response = spi_motor1.xfer2(data)
-#print(response)
+spi.xfer2(data_builder("GCONF", [0x00, 0x00, 0x00, 0x0C], "W"))
+spi.xfer2(data_builder("CHOPCONF", [0x00, 0x01, 0x00, 0xC3], "W"))
+spi.xfer2(data_builder("IHOLD_IRUN", [0x00, 0x80, 0x0F, 0x0A], "W"))
+spi.xfer2(data_builder("TPOWERDOWN", [0x00, 0x00, 0x00, 0x0A], "W"))
+spi.xfer2(data_builder("TPWMTHRS", [0x00, 0x00, 0x01, 0xF4], "W"))
 
-data = data_builder("TPOWERDOWN", [0x00, 0x00, 0x00, 0x0A], "W")
-#print(data, end='---')
-response = spi_motor1.xfer2(data)
-#print(response)
+"""
+    Values for speed and acceleration,
+    Values set should obey rules set by datasheet but only VMAX matters for the movement in this case
+"""
 
-data = data_builder("TPWMTHRS", [0x00, 0x00, 0x01, 0xF4], "W")
-#print(data, end='---')
-response = spi_motor1.xfer2(data)
-#print(response)
+spi.xfer2(data_builder("A1", [0x00, 0x00, 0x13, 0x88], "W"))
+spi.xfer2(data_builder("V1", [0x00, 0x00, 0x68, 0xDB], "W"))
+spi.xfer2(data_builder("AMAX", [0x00, 0x00, 0x13, 0x88], "W"))
+spi.xfer2(data_builder("DMAX", [0x00, 0x00, 0x13, 0x88], "W"))
+spi.xfer2(data_builder("D1", [0x00, 0x00, 0x13, 0x88], "W"))
+spi.xfer2(data_builder("VSTOP", [0x00, 0x00, 0x00, 0x0A], "W"))
+spi.xfer2(data_builder("RAMPMODE", [0x00, 0x00, 0x00, 0x02], "W"))#set it to 2 to have constant velocity with no target
+  
+#the two speeds for fan
+def spin1():
+    spi.xfer2(data_builder("VMAX", [0x00, 0x05, 0x86, 0xA0], "W")) #values found experimentally
 
-#Values for speed and acceleration
-data = data_builder("VSTART", [0x00, 0x00, 0x00, 0x01], "W")
-#print(data, end='---')
-response = spi_motor1.xfer2(data)
-#print(response)
-
-data = data_builder("A1", [0x00, 0x00, 0x13, 0x88], "W")
-#print(data, end='---')
-response = spi_motor1.xfer2(data)
-#print(response)
-
-data = data_builder("V1", [0x00, 0x00, 0x68, 0xDB], "W")
-#print(data, end='---')
-response = spi_motor1.xfer2(data)
-#print(response)
-
-data = data_builder("AMAX", [0x00, 0x00, 0x13, 0x88], "W")
-#print(data, end='---')
-response = spi_motor1.xfer2(data)
-#print(response)
-
-data = data_builder("VMAX", [0x00, 0x01, 0x86, 0xA0], "W")
-#print(data, end='---')
-response = spi_motor1.xfer2(data)
-#print(response)
-
-data = data_builder("DMAX", [0x00, 0x00, 0x13, 0x88], "W")
-#print(data, end='---')
-response = spi_motor1.xfer2(data)
-#print(response)
-
-data = data_builder("D1", [0x00, 0x00, 0x13, 0x88], "W")
-#print(data, end='---')
-response = spi_motor1.xfer2(data)
-#print(response)
-
-data = data_builder("VSTOP", [0x00, 0x00, 0x00, 0x0A], "W")
-#print(data, end='---')
-response = spi_motor1.xfer2(data)
-#print(response)
-
-data = data_builder("RAMPMODE", [0x00, 0x00, 0x00, 0x00], "W")
-#print(data, end='---')
-response = spi_motor1.xfer2(data)
-#print(response)        
-
-def _action():
-    try:
-        data = data_builder("XACTUAL", [0x00, 0x00, 0x00, 0x00], "R")
-        response = spi_motor1.xfer2(data)
-        #print("Reply: ", response)
-
-        data = data_builder("XTARGET", [0x00, 0x07, 0xD0, 0x00], "W")
-        response = spi_motor1.xfer2(data)
-        #print("Writing...")
-
-        sleep(1)
-
-        data = data_builder("XACTUAL", [0x00, 0x00, 0x00, 0x00], "R")
-        response = spi_motor1.xfer2(data)
-        #print("Reply: ", response)
-
-
-        data = data_builder("XTARGET", [0x00, 0x00, 0x00, 0x00], "W")
-        response = spi_motor1.xfer2(data)
-        #print("Writing...")
-
-        sleep(1)
-    finally:
-        #spi.close()
-        GPIO.output(22, 0) #to reset motor registers
-        GPIO.output(22, 1)
-        #GPIO.cleanup()
-        #print("Exited gracefully")
+def spin2():
+    spi.xfer2(data_builder("VMAX", [0x00, 0x09, 0xFF, 0xFF], "W")) #values found experimentally
 
 def stop():
-    #spi.close()
-    GPIO.output(22, 0) #to reset motor registers
-    GPIO.output(22, 1)
-    #GPIO.cleanup()
-    #print("Exited gracefully")
+    data = data_builder("VMAX", [0x00, 0x00, 0x00, 0x00], "W") #set max speed to 0
+    response = spi.xfer2(data)

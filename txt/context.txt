@@ -1,1 +1,0 @@
-dist(12);temp(27);light_intensity(330);pot_value(0);

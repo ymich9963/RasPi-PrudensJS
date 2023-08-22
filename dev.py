@@ -9,8 +9,8 @@ import tech as tech
 import threading
 
 #to chage policy level, not used in final version
-version = 0
-max_policy_num = 9
+version = 8
+max_policy_num = 9 # + 1 when adding a new policy
 x = None
 
 #initalise peripherals
@@ -54,6 +54,7 @@ def program():
                 print("Error call dev")
                     
 #       start a subprocess to interface with Prudens
+        print(toContext)
         conclusions = fcn.subproc(toContext)
                 
 #       check for which conclusion corresponds to an actuator
@@ -62,7 +63,7 @@ def program():
                 actuator.actuator_action()
 
 #        Output Prudens conclusions for debugging, also displays sensor outputs          
-        #print("\nConclusions: ", conclusions)      
+        print("\nConclusions: ", conclusions)      
 
 def user_input_thread():
     global version, x

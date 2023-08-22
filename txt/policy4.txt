@@ -5,7 +5,8 @@
     R3 :: btn1_pressed implies all_LED_off;
     C2 :: blinkLED1slow # all_LED_off;
     C3 :: blinkLED1fast # all_LED_off;
-    R4 :: all_LED_off, dist(X), -?checkFar(X) implies onLED2;
+    R4 :: btn1_pressed, dist(X), -?checkFar(X) implies onLED2;
+    R5 :: -btn1_pressed, dist(X), -?checkFar(X) implies offLED2;
     C4 :: onLED2 # blinkLED1slow;
     C5 :: onLED2 # blinkLED1fast;
     C6 :: onLED2 # all_LED_off;
