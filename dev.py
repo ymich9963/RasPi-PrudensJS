@@ -9,9 +9,9 @@ import tech as tech
 import threading
 
 #to chage policy level, not used in final version
-version = 8
+version = 0
 max_policy_num = 9 # + 1 when adding a new policy
-x = None
+user_input = None
 
 #initalise peripherals
 for sensor in tech.sens_array:
@@ -20,17 +20,17 @@ for sensor in tech.sens_array:
 for actuator in tech.act_array:
     actuator.actuator_setup()
 
-print(f"\n--------------START---------------\nStarting with Policy version {version}")
+print(f"{fcn.blackFG_bold_whiteBG}\n--------------START---------------{fcn.ENDC}")
+print(f"Starting with Policy version {version}")
 
 def program():
     global version
     while True:
         toContext = ""
-
 #       change policy version on button press, and simulate user input
         if btn.btn_is_pressed(2):
             version += 1
-            print("\nPolicy level " + str(version % max_policy_num) +" is being used. \n\nEnter new rule: ", end="")
+            print("\nPolicy level " + str(version % max_policy_num) +" is being used. \nEnter new rule: ", end="")
         fcn.change_policy_version(version, max_policy_num)
 
 
@@ -54,7 +54,7 @@ def program():
                 print("Error call dev")
                     
 #       start a subprocess to interface with Prudens
-        print(toContext)
+        #print(toContext)
         conclusions = fcn.subproc(toContext)
                 
 #       check for which conclusion corresponds to an actuator
@@ -63,17 +63,18 @@ def program():
                 actuator.actuator_action()
 
 #        Output Prudens conclusions for debugging, also displays sensor outputs          
-        print("\nConclusions: ", conclusions)      
+        #print("\nConclusions: ", conclusions)      
 
+#thread to check in real-time if the user inputs anything
 def user_input_thread():
-    global version, x
+    global version, user_input
     while True:
-        x = input("\nEnter new rule: ")
-        if any((char in set('abcdefghijklmnopqrstuvwxyz')) for char in x):
+        user_input = input(f"{fcn.NL}Enter new rule: ")
+        if any((char in set('abcdefghijklmnopqrstuvwxyz')) for char in user_input):
             version += 1
-            print("Policy level " + str(version % max_policy_num) +" is being used", end="\n")
+            print("Policy level " + str(version % max_policy_num) +" is being used")
     
-
+#main is required to combine the two threads
 def main():
     try:
         prog_thread = threading.Thread(target=program)
@@ -90,7 +91,7 @@ def main():
         raise 
 
     finally:                                         
-        print("Exited program")
+        print(f"{fcn.blackFG_bold_yellowBG}{fcn.NL}Exited program{fcn.ENDC}")
         fcn.sys_exit()
 
 main()

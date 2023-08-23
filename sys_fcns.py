@@ -7,6 +7,11 @@ GPIO.setmode(GPIO.BCM)
 spi = spidev.SpiDev(0, 0)
 spi.max_speed_hz = 250000
 
+#terminal formatting
+blackFG_bold_whiteBG = "\033[30;1;47m"
+ENDC = "\033[0m"
+blackFG_bold_yellowBG = "\033[30;1;43m"
+NL = "\n"
 
 def subproc(context_inp):
     """Function to interface with Prudens

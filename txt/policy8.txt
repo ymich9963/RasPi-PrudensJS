@@ -18,7 +18,7 @@
     C7 :: move_motor_2 # move_motor_1;
    R11 :: light_intensity(X), ?checkLightLow(X) implies rgb_led_red_on;
    R12 :: light_intensity(X), -?checkLightLow(X) implies rgb_led_red_off;
-    C8 :: rgb_led_yellow_on # rgb_led_red_off;
+    C8 :: rgb_led_red_on # rgb_led_yellow_on;
     
 @Code
 function checkFar(x) {
@@ -34,5 +34,5 @@ function checkTemp(x) {
     return parseFloat(x) > 25
 }
 function checkLightLow(x) {
-    return parseFloat(x) < 200
+    return parseFloat(x) < 50
 }
