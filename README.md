@@ -23,6 +23,8 @@ An implementation of [PrudensJS](https://github.com/VMarkos/prudens-js) on a [Ra
 
 ```txt``` - Contains the text files used by the project.
 
+```fan model``` - 3D printed fan files.
+
 ```prudens-js``` - [PrudensJS](https://github.com/VMarkos/prudens-js)
 
 
