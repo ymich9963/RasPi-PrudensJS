@@ -15,7 +15,9 @@ An implementation of [PrudensJS](https://github.com/VMarkos/prudens-js) on a [Ra
 
 ## Directories
 
-```docs``` - Documentation for the advanced sensors used. 
+```docs``` - Documentation for the system and device datasheets. 
+
+```blank_system``` - A version of the project software with no peripherals added except the two buttons.
 
 ```drivers``` - For a sensor/actuator to run a driver file is required to be placed here and to contain all of its functionality.  
 

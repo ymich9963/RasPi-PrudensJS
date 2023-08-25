@@ -86,45 +86,46 @@ def data_builder(addr, value, rw):
 
     return value
 
-spi = spidev.SpiDev()
-spi.open(1,2)  # Open SPI bus 1, device 2
-spi.mode = 0 # could comment out
-spi.max_speed_hz = 500000
+def setup():
+    spi = spidev.SpiDev()
+    spi.open(1,2)  # Open SPI bus 1, device 2
+    spi.mode = 0 # could comment out
+    spi.max_speed_hz = 500000
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setup([22,26,5], GPIO.OUT)
-GPIO.output(22, 0) #to reset motor registers at initial setup
-GPIO.output(22, 1)
-GPIO.output(26, 0)
-GPIO.output(5 , 0)
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup([22,26,5], GPIO.OUT)
+    GPIO.output(22, 0) #to reset motor registers at initial setup
+    GPIO.output(22, 1)
+    GPIO.output(26, 0)
+    GPIO.output(5 , 0)
 
-"""
-    Can use this format for checking the response, e.g.
-    data = data_builder("GCONF", [0x00, 0x00, 0x00, 0x0C], "W")
-    response = spi.xfer2(data)
-"""
+    """
+        Can use this format for checking the response, e.g.
+        data = data_builder("GCONF", [0x00, 0x00, 0x00, 0x0C], "W")
+        response = spi.xfer2(data)
+    """
 
-#set max speed to 0, first execution as to not allow motor to false start
-spi.xfer2(data_builder("VMAX", [0x00, 0x00, 0x00, 0x00], "W"))
+    #set max speed to 0, first execution as to not allow motor to false start
+    spi.xfer2(data_builder("VMAX", [0x00, 0x00, 0x00, 0x00], "W"))
 
-spi.xfer2(data_builder("GCONF", [0x00, 0x00, 0x00, 0x0C], "W"))
-spi.xfer2(data_builder("CHOPCONF", [0x00, 0x01, 0x00, 0xC3], "W"))
-spi.xfer2(data_builder("IHOLD_IRUN", [0x00, 0x80, 0x0F, 0x0A], "W"))
-spi.xfer2(data_builder("TPOWERDOWN", [0x00, 0x00, 0x00, 0x0A], "W"))
-spi.xfer2(data_builder("TPWMTHRS", [0x00, 0x00, 0x01, 0xF4], "W"))
+    spi.xfer2(data_builder("GCONF", [0x00, 0x00, 0x00, 0x0C], "W"))
+    spi.xfer2(data_builder("CHOPCONF", [0x00, 0x01, 0x00, 0xC3], "W"))
+    spi.xfer2(data_builder("IHOLD_IRUN", [0x00, 0x80, 0x0F, 0x0A], "W"))
+    spi.xfer2(data_builder("TPOWERDOWN", [0x00, 0x00, 0x00, 0x0A], "W"))
+    spi.xfer2(data_builder("TPWMTHRS", [0x00, 0x00, 0x01, 0xF4], "W"))
 
-"""
-    Values for speed and acceleration,
-    Values set should obey rules set by datasheet but only VMAX matters for the movement in this case
-"""
+    """
+        Values for speed and acceleration,
+        Values set should obey rules set by datasheet but only VMAX matters for the movement in this case
+    """
 
-spi.xfer2(data_builder("A1", [0x00, 0x00, 0x13, 0x88], "W"))
-spi.xfer2(data_builder("V1", [0x00, 0x00, 0x68, 0xDB], "W"))
-spi.xfer2(data_builder("AMAX", [0x00, 0x00, 0x13, 0x88], "W"))
-spi.xfer2(data_builder("DMAX", [0x00, 0x00, 0x13, 0x88], "W"))
-spi.xfer2(data_builder("D1", [0x00, 0x00, 0x13, 0x88], "W"))
-spi.xfer2(data_builder("VSTOP", [0x00, 0x00, 0x00, 0x0A], "W"))
-spi.xfer2(data_builder("RAMPMODE", [0x00, 0x00, 0x00, 0x02], "W"))#set it to 2 to have constant velocity with no target
+    spi.xfer2(data_builder("A1", [0x00, 0x00, 0x13, 0x88], "W"))
+    spi.xfer2(data_builder("V1", [0x00, 0x00, 0x68, 0xDB], "W"))
+    spi.xfer2(data_builder("AMAX", [0x00, 0x00, 0x13, 0x88], "W"))
+    spi.xfer2(data_builder("DMAX", [0x00, 0x00, 0x13, 0x88], "W"))
+    spi.xfer2(data_builder("D1", [0x00, 0x00, 0x13, 0x88], "W"))
+    spi.xfer2(data_builder("VSTOP", [0x00, 0x00, 0x00, 0x0A], "W"))
+    spi.xfer2(data_builder("RAMPMODE", [0x00, 0x00, 0x00, 0x02], "W"))#set it to 2 to have constant velocity with no target
   
 #the two speeds for fan
 def spin1():

@@ -47,11 +47,11 @@ GPIO.setmode(GPIO.BCM)
 sens_array = [
     cf.Sensor("USR1",[17,15],"dist(X);","",usr.getDist,usr.setupUSR),
     cf.Sensor("BTN1",[24],"btn1_pressed;","-btn1_pressed;",btn.btn_is_held,btn.setupButton),
-    cf.Sensor("BTN2",[2],"","",btn.btn_is_pressed,btn.setupButton),
+    cf.Sensor("BTN2",[2],"","",btn.btn_is_pressed,btn.setupButton), #user input button
     cf.Sensor("TEMP1",1,"temp(X);","",temp.getTemp, adc_fcn = fcn.adc_read),
     cf.Sensor("LIGHT1",2,"light_intensity(X);","",light.getLightInt, adc_fcn = fcn.adc_read),
     cf.Sensor("POT1",0,"pot_value(X);","",pot.getPotValue, adc_fcn = fcn.adc_read),
-    cf.Sensor("BTN3",[27],"","",btn.btn_is_pressed,btn.setupButton)
+    cf.Sensor("BTN3",[27],"","",btn.btn_is_pressed,btn.setupButton) #restart button
 ]
 
 act_array = [
@@ -60,11 +60,11 @@ act_array = [
     cf.Actuator("LED2", [4], "offLED2", led.offLED, None),
     cf.Actuator("LED1", [3], "blinkLED1fast", led.blinkLEDfast, None), #use None for setup function when having duplicate actions for actuators
     cf.Actuator("all_LED_off", None, "all_LED_off", led.all_offLED, None),
-    cf.Actuator("RGB_led",[13, 12, 6], "rgb_led_red_on", rgb.on_red,rgb.rgb_setup),#pins 13 and 12 are PWM pins (just a FYI)
+    cf.Actuator("RGB_led",[13, 12, 6], "rgb_led_red_on", rgb.on_red,rgb.rgb_setup),
     cf.Actuator("RGB_led",[13, 12, 6], "rgb_led_red_off", rgb.off_red,None),
     cf.Actuator("RGB_led",[13, 12, 6], "rgb_led_yellow_on", rgb.on_yellow,None),
     cf.Actuator("RGB_led",[13, 12, 6], "rgb_led_yellow_off", rgb.off_yellow,None),
-    cf.Actuator("Motor1", None, "move_motor_1", motor.spin1, None),
+    cf.Actuator("Motor1", None, "move_motor_1", motor.spin1, motor.setup),
     cf.Actuator("Motor1", None, "stop_motor", motor.stop, None),
     cf.Actuator("Motor1", None, "move_motor_2", motor.spin2, None)
 ]
