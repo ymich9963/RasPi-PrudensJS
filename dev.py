@@ -10,7 +10,6 @@ import threading
 
 #to chage policy level, not used in final version
 version = 0
-max_policy_num = 9 # + 1 when adding a new policy
 user_input = None
 
 #initalise peripherals
@@ -30,8 +29,8 @@ def program():
 #       change policy version on button press, and simulate user input
         if btn.btn_is_pressed(2):
             version += 1
-            print("\nPolicy level " + str(version % max_policy_num) +" is being used. \nEnter new rule: ", end="")
-        fcn.change_policy_version(version, max_policy_num)
+            print("\nPolicy level " + str(version % tech.total_policy_files) +" is being used. \nEnter new rule: ", end="")
+        fcn.change_policy_version(version, tech.total_policy_files)
 
 
 #       if changes are made to the technician file, 
@@ -72,7 +71,7 @@ def user_input_thread():
         user_input = input(f"{fcn.NL}Enter new rule: ")
         if any((char in set('abcdefghijklmnopqrstuvwxyz')) for char in user_input):
             version += 1
-            print("Policy level " + str(version % max_policy_num) +" is being used")
+            print("Policy level " + str(version % tech.total_policy_files) +" is being used")
     
 #main is required to combine the two threads
 def main():

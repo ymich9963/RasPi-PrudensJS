@@ -43,6 +43,9 @@ from drivers import TMC5160 as motor
 #use GPIO numbers instead of board pin numbers
 GPIO.setmode(GPIO.BCM) 
 
+#allow control of the number of policy files
+total_policy_files = 9
+
 #declaring sensors and actuators as objects
 sens_array = [
     cf.Sensor("USR1",[17,15],"dist(X);","",usr.getDist,usr.setupUSR),
