@@ -21,7 +21,7 @@ An implementation of [PrudensJS](https://github.com/VMarkos/prudens-js) on a [Ra
 
 ```drivers``` - For a sensor/actuator to run a driver file is required to be placed here and to contain all of its functionality.  
 
-```tests``` - Certain tests to make sure certain components function as inteded.
+```tests``` - Certain tests to make sure certain components function as inteded. Mainly used for device driver testing
 
 ```txt``` - Contains the text files used by the project.
 
