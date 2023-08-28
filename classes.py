@@ -134,6 +134,8 @@ class Actuator:
     def actuator_setup(self):
         if self.setup_fcn == None:
             return
+        elif self.pin == None:
+            self.setup_fcn()
         else:
             size = len(self.pin)
             if size == 1:

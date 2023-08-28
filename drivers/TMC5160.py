@@ -2,6 +2,87 @@ import spidev
 from time import sleep
 import RPi.GPIO as GPIO
 
+spi = spidev.SpiDev()
+spi.open(1,2)  # Open SPI bus 1, device 2
+spi.mode = 0 # could comment out
+spi.max_speed_hz = 500000
+
+GPIO.setmode(GPIO.BCM)
+
+def setup():
+    GPIO.setup([22,26,5], GPIO.OUT)
+    GPIO.output(22, 0) #to reset motor registers at initial setup
+    GPIO.output(22, 1)
+    GPIO.output(26, 0)
+    GPIO.output(5 , 0)
+
+    """
+        Can use this format for checking the response, e.g.
+        data = data_builder("GCONF", [0x00, 0x00, 0x00, 0x0C], "W")
+        response = spi.xfer2(data)
+    """
+
+    #set max speed to 0, first execution as to not allow motor to false start
+    spi.xfer2(data_builder("VMAX", [0x00, 0x00, 0x00, 0x00], "W"))
+
+    spi.xfer2(data_builder("GCONF", [0x00, 0x00, 0x00, 0x0C], "W"))
+    spi.xfer2(data_builder("CHOPCONF", [0x00, 0x01, 0x00, 0xC3], "W"))
+    spi.xfer2(data_builder("IHOLD_IRUN", [0x00, 0x80, 0x0F, 0x0A], "W"))
+    spi.xfer2(data_builder("TPOWERDOWN", [0x00, 0x00, 0x00, 0x0A], "W"))
+    spi.xfer2(data_builder("TPWMTHRS", [0x00, 0x00, 0x01, 0xF4], "W"))
+
+    """
+        Values for speed and acceleration,
+        Values set should obey rules set by datasheet but only VMAX matters for the movement in this case
+    """
+
+    spi.xfer2(data_builder("A1", [0x00, 0x00, 0x13, 0x88], "W"))
+    spi.xfer2(data_builder("V1", [0x00, 0x00, 0x68, 0xDB], "W"))
+    spi.xfer2(data_builder("AMAX", [0x00, 0x00, 0x13, 0x88], "W"))
+    spi.xfer2(data_builder("DMAX", [0x00, 0x00, 0x13, 0x88], "W"))
+    spi.xfer2(data_builder("D1", [0x00, 0x00, 0x13, 0x88], "W"))
+    spi.xfer2(data_builder("VSTOP", [0x00, 0x00, 0x00, 0x0A], "W"))
+    spi.xfer2(data_builder("RAMPMODE", [0x00, 0x00, 0x00, 0x02], "W"))#set it to 2 to have constant velocity with no target
+  
+#the two speeds for fan
+def spin1():
+    spi.xfer2(data_builder("VMAX", [0x00, 0x05, 0x86, 0xA0], "W")) #values found experimentally
+
+def spin2():
+    spi.xfer2(data_builder("VMAX", [0x00, 0x09, 0xFF, 0xFF], "W")) #values found experimentally
+
+def stop():
+    data = data_builder("VMAX", [0x00, 0x00, 0x00, 0x00], "W") #set max speed to 0
+    response = spi.xfer2(data)
+
+def address_resolver(addr):
+    return reg_addr[addr]["addr"]
+
+def register_access(addr, rw):
+    #Checking register access right
+    if rw not in reg_addr[addr]["access"]:
+        print(f"Error {addr} Register can't be {rw}, system stop.")
+        sys.exit(1)
+    else:
+        return 0
+
+def data_builder(addr, value, rw):
+    """
+    Build data trame.
+    Check for register access, configure MSB and concate into a list.
+    input:  register name, list of values, read of write status
+    output: hexadecimal trame list [register_addr, val1, val2, val3, val4]
+    """
+    addr_value = address_resolver(addr)
+    register_access(addr, rw)
+
+    # IF write to buffer => set MSB to 1
+    if rw == "W":
+        addr_value += 0x80 # set MSB to 1
+    value.insert(0, addr_value)
+
+    return value
+
 reg_addr = {  "GCONF": {"addr": 0x00, "access": "RW"}, # normal mode + stealth chop (stealthChop voltage PWM mode enabled (depending on velocity thresholds). Switch on while in stand still, only.)
             "GSTAT": {"addr": 0x01, "access": "R"}, # Write reset at start up
             "IFCNT": {"addr": 0x02, "access": "R"},
@@ -57,83 +138,3 @@ reg_addr = {  "GCONF": {"addr": 0x00, "access": "RW"}, # normal mode + stealth c
             "ENCM_CTRL":   {"addr": 0x72, "access":"W"}, 
             "LOST_STEPS":   {"addr": 0x73, "access":"R"}, 
 }
-
-def address_resolver(addr):
-    return reg_addr[addr]["addr"]
-
-def register_access(addr, rw):
-    #Checking register access right
-    if rw not in reg_addr[addr]["access"]:
-        print(f"Error {addr} Register can't be {rw}, system stop.")
-        sys.exit(1)
-    else:
-        return 0
-
-def data_builder(addr, value, rw):
-    """
-    Build data trame.
-    Check for register access, configure MSB and concate into a list.
-    input:  register name, list of values, read of write status
-    output: hexadecimal trame list [register_addr, val1, val2, val3, val4]
-    """
-    addr_value = address_resolver(addr)
-    register_access(addr, rw)
-
-    # IF write to buffer => set MSB to 1
-    if rw == "W":
-        addr_value += 0x80 # set MSB to 1
-    value.insert(0, addr_value)
-
-    return value
-
-def setup():
-    spi = spidev.SpiDev()
-    spi.open(1,2)  # Open SPI bus 1, device 2
-    spi.mode = 0 # could comment out
-    spi.max_speed_hz = 500000
-
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup([22,26,5], GPIO.OUT)
-    GPIO.output(22, 0) #to reset motor registers at initial setup
-    GPIO.output(22, 1)
-    GPIO.output(26, 0)
-    GPIO.output(5 , 0)
-
-    """
-        Can use this format for checking the response, e.g.
-        data = data_builder("GCONF", [0x00, 0x00, 0x00, 0x0C], "W")
-        response = spi.xfer2(data)
-    """
-
-    #set max speed to 0, first execution as to not allow motor to false start
-    spi.xfer2(data_builder("VMAX", [0x00, 0x00, 0x00, 0x00], "W"))
-
-    spi.xfer2(data_builder("GCONF", [0x00, 0x00, 0x00, 0x0C], "W"))
-    spi.xfer2(data_builder("CHOPCONF", [0x00, 0x01, 0x00, 0xC3], "W"))
-    spi.xfer2(data_builder("IHOLD_IRUN", [0x00, 0x80, 0x0F, 0x0A], "W"))
-    spi.xfer2(data_builder("TPOWERDOWN", [0x00, 0x00, 0x00, 0x0A], "W"))
-    spi.xfer2(data_builder("TPWMTHRS", [0x00, 0x00, 0x01, 0xF4], "W"))
-
-    """
-        Values for speed and acceleration,
-        Values set should obey rules set by datasheet but only VMAX matters for the movement in this case
-    """
-
-    spi.xfer2(data_builder("A1", [0x00, 0x00, 0x13, 0x88], "W"))
-    spi.xfer2(data_builder("V1", [0x00, 0x00, 0x68, 0xDB], "W"))
-    spi.xfer2(data_builder("AMAX", [0x00, 0x00, 0x13, 0x88], "W"))
-    spi.xfer2(data_builder("DMAX", [0x00, 0x00, 0x13, 0x88], "W"))
-    spi.xfer2(data_builder("D1", [0x00, 0x00, 0x13, 0x88], "W"))
-    spi.xfer2(data_builder("VSTOP", [0x00, 0x00, 0x00, 0x0A], "W"))
-    spi.xfer2(data_builder("RAMPMODE", [0x00, 0x00, 0x00, 0x02], "W"))#set it to 2 to have constant velocity with no target
-  
-#the two speeds for fan
-def spin1():
-    spi.xfer2(data_builder("VMAX", [0x00, 0x05, 0x86, 0xA0], "W")) #values found experimentally
-
-def spin2():
-    spi.xfer2(data_builder("VMAX", [0x00, 0x09, 0xFF, 0xFF], "W")) #values found experimentally
-
-def stop():
-    data = data_builder("VMAX", [0x00, 0x00, 0x00, 0x00], "W") #set max speed to 0
-    response = spi.xfer2(data)

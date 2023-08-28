@@ -1,8 +1,6 @@
 """
     Driver for an RGB. Contains the setup function, reset and on/off for each colour.
 """
-
-
 import RPi.GPIO as GPIO
 
 GPIO.setmode(GPIO.BCM)

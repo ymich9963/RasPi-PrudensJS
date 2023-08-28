@@ -14,7 +14,7 @@
     R7 :: light_intensity(X), ?checkLight(X) implies rgb_led_yellow_off;
     R8 :: pot_value(X), ?checkPot(X) implies move_motor_1;
     R9 :: pot_value(X), -?checkPot(X) implies stop_motor;
-   R10 :: temp(X), ?checkTemp(X), pot_value(X), ?checkPot(X) implies move_motor_2;
+   R10 :: move_motor_1, temp(X), ?checkTemp(X) implies move_motor_2;
     C7 :: move_motor_2 # move_motor_1;
 
     
