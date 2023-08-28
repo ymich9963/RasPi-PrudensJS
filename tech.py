@@ -31,8 +31,8 @@ import classes as cf
 import sys_fcns as fcn
 
 #driver imports
-from drivers import hc_sr04 as usr
 from drivers import button as btn
+from drivers import hc_sr04 as usr
 from drivers import led
 from drivers import DFR0023_temp as temp
 from drivers import DFR0025_light as light
@@ -48,13 +48,13 @@ total_policy_files = 9
 
 #declaring sensors and actuators as objects
 sens_array = [
-    cf.Sensor("USR1",[17,15],"dist(X);","",usr.getDist,usr.setupUSR),
-    cf.Sensor("BTN1",[24],"btn1_pressed;","-btn1_pressed;",btn.btn_is_held,btn.setupButton),
-    cf.Sensor("BTN2",[2],"","",btn.btn_is_pressed,btn.setupButton), #user input button
-    cf.Sensor("TEMP1",1,"temp(X);","",temp.getTemp, adc_fcn = fcn.adc_read),
-    cf.Sensor("LIGHT1",2,"light_intensity(X);","",light.getLightInt, adc_fcn = fcn.adc_read),
-    cf.Sensor("POT1",0,"pot_value(X);","",pot.getPotValue, adc_fcn = fcn.adc_read),
-    cf.Sensor("BTN3",[27],"","",btn.btn_is_pressed,btn.setupButton) #restart button
+    cf.Sensor("BTN1",[2],"","",btn.btn_is_pressed,btn.setupButton), #user input button
+    cf.Sensor("BTN2",[27],"","",btn.btn_is_pressed,btn.setupButton), #restart button
+   cf.Sensor("USR1",[17,15],"dist(X);","",usr.getDist,usr.setupUSR),
+   cf.Sensor("BTN3",[24],"btn1_pressed;","-btn1_pressed;",btn.btn_is_held,btn.setupButton),
+   cf.Sensor("TEMP1",1,"temp(X);","",temp.getTemp, adc_fcn = fcn.adc_read),
+   cf.Sensor("LIGHT1",2,"light_intensity(X);","",light.getLightInt, adc_fcn = fcn.adc_read),
+   cf.Sensor("POT1",0,"pot_value(X);","",pot.getPotValue, adc_fcn = fcn.adc_read),
 ]
 
 act_array = [

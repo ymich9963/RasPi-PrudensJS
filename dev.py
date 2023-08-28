@@ -9,7 +9,7 @@ import tech as tech
 import threading
 
 #to chage policy level, not used in final version
-version = 7
+version = 0
 user_input = None
 
 #initalise peripherals
