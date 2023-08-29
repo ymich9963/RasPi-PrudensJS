@@ -1,5 +1,5 @@
 import RPi.GPIO as GPIO
-import subprocess, json, sys, spidev, os, importlib, threading, queue
+import subprocess, json, sys, spidev, os, importlib, threading
 
 GPIO.setmode(GPIO.BCM)
 
@@ -113,10 +113,10 @@ def map(x, in_min, in_max, out_min, out_max):
     """
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
 
-#Copies driver files found on USB
+#Copies driver files found on USB, changed to copy to blank system path
 def copy_from_USB():
     if os.path.exists("//media/yiannis/DRIVER_USB/RasPi-PrudensJS/drivers/"):
-        os.system("cp -r //media/yiannis/DRIVER_USB/RasPi-PrudensJS/drivers ~/cyens")
+        os.system("cp -r //media/yiannis/DRIVER_USB/RasPi-PrudensJS/drivers ~/cyens/blank_system")
 
 #Print the ADC readings for testing
 def print_adc_readings(pot_reading, temp_reading, light_reading):
