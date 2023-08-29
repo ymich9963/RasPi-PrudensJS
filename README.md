@@ -1,5 +1,5 @@
 # RasPi-Prudens 
-An implementation of [PrudensJS](https://github.com/VMarkos/prudens-js) on a [Raspberry Pi 400](https://www.raspberrypi.com/products/raspberry-pi-400/) with sensors and actuators. 
+An implementation of [PrudensJS](https://github.com/VMarkos/prudens-js) on a [Raspberry Pi 400](https://www.raspberrypi.com/products/raspberry-pi-400/) with sensors and actuators. Created during my internship at CYENS SCRAT.
 
 ## Files
 
