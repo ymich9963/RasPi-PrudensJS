@@ -39,7 +39,7 @@ class Sensor:
     is_literal_numeric = False
     default_literal_p = ""
     default_literal_n = ""
-    def __init__(self, sensor_id, pin_or_channel, literal_p = "", literal_n = "", action_fcn = None, setup_fcn = None, adc_fcn = None):
+    def __init__(self, sensor_id, pin_or_channel, literal_p, literal_n, action_fcn, setup_fcn, adc_fcn = None):
         
         self.sensor_id = sensor_id
         self.pin_or_channel = pin_or_channel
@@ -109,7 +109,7 @@ class Sensor:
             
 
 class Actuator:
-    def __init__(self, actuator_id, pin, literal = "", action_fcn = None, setup_fcn = None):
+    def __init__(self, actuator_id, pin, literal, action_fcn, setup_fcn):
         """Actuator object contains all of the actuator data.
 
         Args:
@@ -134,6 +134,8 @@ class Actuator:
     def actuator_setup(self):
         if self.setup_fcn == None:
             return
+        elif self.pin == None:
+            self.setup_fcn()
         else:
             size = len(self.pin)
             if size == 1:

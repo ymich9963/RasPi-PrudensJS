@@ -21,7 +21,7 @@ def subproc(context_inp):
     """
 
     proc = subprocess.Popen(
-        ["/usr/bin/node","/home/yiannis/cyens/prudens-js/node/app.js", context_inp],
+        ["/usr/bin/node","/home/yiannis/cyens/blank_system/prudens-js/node/app.js", context_inp],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
@@ -47,8 +47,8 @@ def change_policy_version(version, max_policy_num):
         code to change policy level, 
         will not be in the final version, temporarily simulates user input
     """
-    pf = open("/home/yiannis/cyens/txt/policy.txt", "w")
-    path = "/home/yiannis/cyens/txt/policy"+str(version % max_policy_num)+".txt"
+    pf = open("/home/yiannis/cyens/blank_system/txt/policy.txt", "w")
+    path = "/home/yiannis/cyens/blank_system/txt/policy"+str(version % max_policy_num)+".txt"
     with open(path, "r") as policy:
         data = policy.read()
     pf.write(data)
@@ -89,6 +89,7 @@ def sys_restart(sens_array, act_array, module):
         sensor.sensor_setup()
     for actuator in act_array:
         actuator.actuator_setup()
+    print(f"{blackFG_bold_yellowBG}System restarted{ENDC}")
 
 #TODO: used to pause the system
 def sys_stand_by():
@@ -113,10 +114,10 @@ def map(x, in_min, in_max, out_min, out_max):
     """
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
 
-#Copies driver files found on USB, changed to copy to blank system path
+#Copies driver files found on USB
 def copy_from_USB():
-    if os.path.exists("//media/yiannis/DRIVER_USB/RasPi-PrudensJS/drivers/"):
-        os.system("cp -r //media/yiannis/DRIVER_USB/RasPi-PrudensJS/drivers ~/cyens/blank_system")
+    if os.path.exists("/media/yiannis/DRIVER_USB/RasPi-PrudensJS/drivers/"):
+        os.system("cp -r /media/yiannis/DRIVER_USB/RasPi-PrudensJS/drivers ~/cyens/blank_system")
 
 #Print the ADC readings for testing
 def print_adc_readings(pot_reading, temp_reading, light_reading):

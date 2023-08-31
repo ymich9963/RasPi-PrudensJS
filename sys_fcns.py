@@ -89,6 +89,7 @@ def sys_restart(sens_array, act_array, module):
         sensor.sensor_setup()
     for actuator in act_array:
         actuator.actuator_setup()
+    print(f"{blackFG_bold_yellowBG}System restarted{ENDC}")
 
 #TODO: used to pause the system
 def sys_stand_by():

@@ -1,3 +1,8 @@
+"""
+Driver file for a TMC5160-BOB. PLease read data sheet for more information as to why certain registers
+were changed. Used the RasPi Trinamic example and a StackOverflow question.
+"""
+
 import spidev
 from time import sleep
 import RPi.GPIO as GPIO
@@ -12,9 +17,9 @@ GPIO.setmode(GPIO.BCM)
 def setup():
     GPIO.setup([22,26,5], GPIO.OUT)
     GPIO.output(22, 0) #to reset motor registers at initial setup
-    GPIO.output(22, 1)
-    GPIO.output(26, 0)
-    GPIO.output(5 , 0)
+    GPIO.output(22, 1) #Vcc_IO
+    GPIO.output(26, 0) #CLK16
+    GPIO.output(5 , 0) #Driver Enable
 
     """
         Can use this format for checking the response, e.g.

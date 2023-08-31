@@ -6,7 +6,7 @@ import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 
 def setupButton(pin):
-    GPIO.setup(pin, GPIO.IN)#, pull_up_down = GPIO.PUD_UP)
+    GPIO.setup(pin, GPIO.IN, pull_up_down = GPIO.PUD_UP) #pull-up due to buttons connecting to ground
     GPIO.add_event_detect(pin,GPIO.RISING) #add the event to the Interrupt Service Routine (ISR)
     
 def btn_is_pressed(pin):

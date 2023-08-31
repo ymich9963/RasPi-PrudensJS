@@ -36,10 +36,13 @@ from drivers import button as btn
 #use GPIO numbers instead of board pin numbers
 GPIO.setmode(GPIO.BCM) 
 
+#allow control of the number of policy files
+total_policy_files = 2
+
 #declaring sensors and actuators as objects
 sens_array = [
-    cf.Sensor("BTN2",[2],"","",btn.btn_is_pressed,btn.setupButton), #user input button
-    cf.Sensor("BTN3",[27],"","",btn.btn_is_pressed,btn.setupButton) #restart button
+    cf.Sensor("BTN1",[15],"","",btn.btn_is_pressed,btn.setupButton), #user input button
+    cf.Sensor("BTN2",[27],"","",btn.btn_is_pressed,btn.setupButton), #restart button
 ]
 
 act_array = [
