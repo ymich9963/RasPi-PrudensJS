@@ -22,7 +22,7 @@ for actuator in tech.act_array:
 print(f"{fcn.blackFG_bold_whiteBG}\n--------------START---------------{fcn.ENDC}")
 print(f"Starting with Policy version {version}")
 
-def program():
+def program_thread():
     global version
     while True:
         toContext = ""
@@ -76,7 +76,7 @@ def user_input_thread():
 #main is required to combine the two threads
 def main():
     try:
-        prog_thread = threading.Thread(target=program)
+        prog_thread = threading.Thread(target=program_thread)
         inp_thread = threading.Thread(target=user_input_thread)
 
         prog_thread.start()
