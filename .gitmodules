@@ -1,0 +1,6 @@
+[submodule "blank_system/prudens-js"]
+	path = blank_system/prudens-js
+	url = https://github.com/ymich9963/prudens-js
+[submodule "prudens-js"]
+	path = prudens-js
+	url = https://github.com/ymich9963/prudens-js
